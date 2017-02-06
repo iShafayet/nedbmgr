@@ -1,0 +1,148 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-login">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+    .limiting-container {
+      margin-top: 10px;
+    }
+    
+    .smaller-container {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+    
+    .login-box {
+      max-width: 420px;
+      width: 100%;
+    }
+    
+    .login-button {
+      background: #2196F3;
+      color: white;
+    }
+    
+    .row-3 {
+      margin-top: 10px;
+    }
+    
+    .row-4 {
+      margin-top: 10px;
+      margin-right: 6px;
+    }
+    
+    a {
+      font-size: 14px;
+      color: #1E88E5;
+      /*text-decoration: none;*/
+    }
+    
+    .copyright-notice {
+      margin-top: 20px;
+      color: #999999;
+      font-size: 14px;
+    }
+    
+    .credentials-message {
+      text-align: center;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #999999;
+    }
+
+    .forgot-password-link {
+      cursor: pointer;;
+    }
+
+    .signup-link{
+      cursor: pointer;;
+    }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <div class="smaller-container vertical layout center">
+
+          <div class="credentials-message">Please log in using your NeDBmgr credentials.</div>
+
+          <paper-card class="login-box">
+
+            <div class="card-content vertical layout">
+
+              <div class="horizontal layout center wrap">
+                <paper-input class="flex" label="Email or phone number" value="{{loginFormData.emailOrPhone}}" placeholder="john@example.com" always-float-label></paper-input>
+              </div>
+
+              <div class="horizontal layout center wrap">
+                <paper-input class="flex" label="Password" type="password" value="{{loginFormData.password}}" placeholder="XXXXXXXX" always-float-label></paper-input>
+              </div>
+
+              <div class="horizontal layout center wrap row-3">
+                <paper-checkbox checked="{{shouldRememberUser}}">Remember Me</paper-checkbox>
+                <div class="flex"></div>
+                <paper-button class="login-button" on-tap="loginButtonPressed" raised>Login</paper-button>
+              </div>
+
+              <div class="horizontal layout center wrap row-4">
+                <a class="forgot-password-link" on-tap="forgotPasswordPressed" target="_blank">Forgot Password?</a>
+                <div class="flex"></div>
+
+              </div>
+
+            </div>
+
+          </paper-card>
+
+          <div class="copyright-notice vertical layout center-justified center">
+            <div>All rights reserved</div>
+            <div>2016 © NeDBmgr</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-login.coffee-compiled.js"></script>
+</dom-module>

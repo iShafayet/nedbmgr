@@ -1,0 +1,256 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- app-* -->
+<link rel="import" href="../../bower-assets/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower-assets/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower-assets/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower-assets/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower-assets/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower-assets/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower-assets/app-route/app-route.html">
+<link rel="import" href="../../bower-assets/app-route/app-location.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower-assets/iron-selector/iron-selector.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-badge/paper-badge.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/debug.html">
+
+<!-- custom -->
+<script src="behavior-data-transformation.coffee-compiled.js"></script>
+<script src="behavior-data-loader.coffee-compiled.js"></script>
+
+<!-- element -->
+<dom-module id="root-element">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style">
+    /* host start */
+    
+    :host {
+      display: block;
+      --app-primary-color: #4285f4;
+      --app-secondary-color: #666666;
+    }
+    /* left menu bar */
+    
+    app-drawer {
+      --app-drawer-scrim-background: rgba(255, 255, 255, 0.4);
+      --app-drawer-content-container: {
+        background-color: white;
+      }
+    }
+    
+    .drawer-list {
+      margin: 0 20px;
+    }
+    
+    .drawer-list a {
+      display: block;
+      padding: 0 16px;
+      line-height: 40px;
+      text-decoration: none;
+      color: var(--app-secondary-color);
+    }
+    
+    .drawer-list a.iron-selected {
+      color: black;
+      font-weight: bold;
+    }
+    
+    .drawer-list a.subroute {
+      padding-left: 32px;
+    }
+    /* app-header start */
+    
+    app-header {
+      background-color: var(--app-primary-color);
+      color: #fff;
+    }
+    /* Simple app-header */
+    
+    app-header.simple {
+      background-color: #4285f4;
+      color: #fff;
+    }
+    
+    app-header.simple paper-icon-button {
+      --paper-icon-button-ink-color: white;
+    }
+    
+    app-header.simple app-toolbar.middle {
+      height: 20px;
+    }
+    
+    div[main-title] {
+      @apply(--layout-flex-none);
+    }
+    
+    .main-title-filler {
+      @apply(--layout-flex);
+    }
+    
+    @media print {
+      app-toolbar {
+        display: none;
+      }
+    }
+    
+    .login-button-group {
+      cursor: pointer;
+    }
+    </style>
+
+    <!-- local DOM -->
+
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{routeLevel2}}"></app-route>
+    <app-route route="{{routeLevel2}}" pattern="/:pageLevel2" data="{{routeLevel2Data}}" tail="{{routeLevel3}}"></app-route>
+    <app-route route="{{routeLevel3}}" pattern="/:pageLevel3" data="{{routeLevel3Data}}" tail="{{routeLevel4}}"></app-route>
+
+    <app-drawer-layout fullbleed>
+      <app-drawer>
+
+        <!-- Left drawer content - Start -->
+        <app-toolbar>NeDBmgr</app-toolbar>
+        <iron-selector selected="[[page.name]]" attr-for-selected="name" class="drawer-list" role="navigation">
+
+          <template is="dom-if" if="[[user]]">
+            <a name="dashboard" href="#/" drawer-toggle>Dashboard</a>
+            <a name="settings" href="#/search" drawer-toggle>Search and Edit</a>
+            <a name="settings" href="#/settings" drawer-toggle>Settings</a>
+            <hr>
+            <a on-tap="logoutPressed">Logout</a>
+          </template>
+          <!-- 
+          <template is="dom-if" if="[[!user]]">
+            NO
+          </template> 
+          -->
+          <template is="dom-if" if="[[$isDevMode()]]">
+            <hr>
+            <a name="dev-tools" href="#/dev-tools">Dev Tools</a>
+          </template>
+        </iron-selector>
+        <!-- Left drawer content - End -->
+
+      </app-drawer>
+      <app-header-layout>
+
+        <!-- App header - Start -->
+        <app-header class="simple" effects="waterfall" reveals>
+          <app-toolbar>
+
+            <!--  header - start -->
+            <template is="dom-if" if="[[$equals(page.headerType, 'normal')]]">
+              <template is="dom-if" if="[[page.leftMenuEnabled]]">
+                <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+              </template>
+            </template>
+
+            <template is="dom-if" if="[[$equals(page.headerType, 'modal')]]">
+              <template is="dom-if" if="[[page.showBackButton]]">
+                <paper-icon-button icon="arrow-back" on-tap="arrowBackButtonPressed"></paper-icon-button>
+              </template>
+            </template>
+
+            <template is="dom-if" if="[[page.showDashboardButton]]">
+              <paper-icon-button icon="dashboard" on-tap="showDashboardButtonPressed"></paper-icon-button>
+            </template>
+
+            <div main-title>[[page.headerTitle]]</div>
+
+            <paper-icon-button icon="refresh" on-tap="refreshButtonPressed"></paper-icon-button>
+
+            <div class="main-title-filler"></div>
+
+            <template is="dom-if" if="[[downloadActions.count]]">
+              <paper-icon-button id="fileDownloadIcon" icon="file-download"></paper-icon-button>
+              <paper-badge for="fileDownloadIcon" label="[[downloadActions.count]]"></paper-badge>
+            </template>
+
+            <template is="dom-if" if="[[apiActions.count]]">
+              <paper-icon-button id="apiActionsIcon" icon="swap-vertical-circle"></paper-icon-button>
+              <paper-badge for="apiActionsIcon" label="[[apiActions.count]]"></paper-badge>
+            </template>
+
+            <!-- 
+            <template is="dom-if" if="[[page.showPrintButton]]">
+              <paper-icon-button icon="print" on-tap="printButtonPressed"></paper-icon-button>
+            </template> 
+            -->
+
+            <template is="dom-if" if="[[page.showSaveButton]]">
+              <paper-icon-button icon="save" on-tap="saveButtonPressed"></paper-icon-button>
+            </template>
+
+            <template is="dom-if" if="[[!page.hideLoginButton]]">
+
+              <template is="dom-if" if="[[user]]">
+                <paper-icon-button icon="settings" on-tap="settingsButtonPressed"></paper-icon-button>
+              </template>
+
+              <template is="dom-if" if="[[!user]]">
+                <paper-icon-button icon="perm-identity" on-tap="loginButtonPressed"></paper-icon-button>
+                <span class="login-button-group" on-tap="loginButtonPressed">Login</span>
+              </template>
+
+            </template>
+
+            <!--  header - end -->
+
+          </app-toolbar>
+        </app-header>
+        <!-- App header - End -->
+
+        <!-- Page switcher - Start -->
+        <iron-pages role="main" selected="[[page.name]]" attr-for-selected="name" fallback-selection="error404" on-iron-select="ironPagesSelectedEvent" on-iron-deselect="ironPagesDeselectedEvent">
+          <!-- see assets/pages.coffee -->
+        </iron-pages>
+        <!-- Page switcher - End -->
+
+        <!-- padding for testing scrolling -->
+        <div style="height:200px;width:1px"></div>
+
+      </app-header-layout>
+    </app-drawer-layout>
+
+    <!-- generic-modal-prompt - start -->
+    <paper-dialog id="generic-modal-prompt" modal on-iron-overlay-closed="genericModalPromptClosed">
+      <h2>[[genericModalPromptContents]]</h2>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus>Confirm</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- generic-modal-prompt - end -->
+
+    <!-- generic-modal-dialog - start -->
+    <paper-dialog id="generic-modal-dialog" modal on-iron-overlay-closed="genericModalDialogClosed">
+      <p>[[genericModalDialogContents]]</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Got It</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- generic-modal-dialog - end -->
+
+    <paper-toast id="toast1" duration="2000" text="[[genericToastContents]]" on-tap="genericToastTapped"></paper-toast>
+
+  </template>
+
+  <script src="root-element.coffee-compiled.js"></script>
+</dom-module>

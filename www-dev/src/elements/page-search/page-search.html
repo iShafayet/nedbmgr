@@ -1,0 +1,247 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-search">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+    .limiting-container {
+      margin-top: 10px;
+    }
+    
+    .external-card-title {
+      margin-top: 20px;
+      margin-left: 20px;
+      margin-right: 10px;
+      color: #777777;
+    }
+    
+    .info-card {
+      @apply(--layout-vertical);
+      /*@apply(--layout-center);*/
+      margin-top: 10px;
+      margin-left: 10px;
+      margin-right: 10px;
+      padding-bottom: 10px;
+    }
+    
+    .info-card .row {
+      margin-left: 10px;
+      /*margin-right: 10px;*/
+      margin-top: 10px;
+    }
+    
+    .info-card .hr {
+      margin-left: 20px;
+      margin-right: 20px;
+      height: 1px;
+      /*width: 100px;*/
+      background: #dddddd;
+    }
+    
+
+    .serial-number {
+      background: #37474F;
+      color: #ffffff;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      padding-left: 8px;
+      padding-right: 8px;
+      /*border-radius: 4px;*/
+      text-transform: uppercase;
+      font-weight: bold;
+      display: inline-block;
+      font-size: 14px;
+    }
+    
+   
+    
+    .limiting-container {
+      max-width: 920px
+    }
+
+    /* NEW */
+
+    .query-input {
+      --iron-autogrow-textarea: {
+        font-family: monospace !important;
+      }
+    }
+
+    .query-input-error {
+      color: red;
+      margin-top: 10px;
+    }
+
+    .skip-input {
+      width: 80px;
+      margin-left: 4px;
+      margin-right: 4px;
+    }
+
+    .prettify-button {
+      background: #E91E63;
+      color: white;
+    }
+
+    .run-query-button {
+      background: #2196F3;
+      color: white;
+    }
+
+    .doc-input {
+      --iron-autogrow-textarea: {
+        font-family: monospace !important;
+        font-size: 16px !important;
+        line-height: 20px !important;
+        background-color: #CFD8DC !important;
+        padding: 4px !important;
+        border-left: 8px solid #546E7A !important;
+      } 
+    }
+
+    .doc-input.error {
+      border: 2px solid #BBDEFB;
+    }
+
+    .doc-save-button {
+      background: #2196F3;
+      color: white;
+    }
+
+    .doc-reset-button {
+      background: #795548;
+      color: white;
+    }
+
+    .doc-remove-button {
+      background: #FF5722;
+      color: white;
+    }
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+          <!-- query - start -->
+          <div class="external-card-title">
+            <div>Query</div>
+          </div>
+
+          <paper-card class="info-card">
+            <div class="card-content">
+
+              <paper-textarea class="query-input" value="{{queryString}}" rows="6"></paper-textarea>
+
+              <template is="dom-if" if="[[queryInputErrorMessage]]">
+                <div class="query-input-error">[[queryInputErrorMessage]]</div>
+              </template>
+
+              <div class="horizontal layout center">
+                <paper-input label="Skip" always-float-label class="skip-input" type="number" value="{{skip}}"></paper-input>
+                <paper-input label="Limit" always-float-label class="skip-input" type="number" value="{{limit}}"></paper-input>
+                <div class="flex"></div>
+                <paper-button on-tap="prettifyButtonTapped" class="prettify-button" raised>Prettify</paper-button>
+                <paper-button on-tap="runQueryButtonTapped" class="run-query-button" raised>Run</paper-button>
+              </div>
+
+            </div>
+          </paper-card>
+          <!-- query - end -->
+
+          <!-- results - start -->
+          <div class="external-card-title">
+            <div>[[resultMessage]]</div>
+          </div>
+
+          <template is="dom-repeat" items="[[docList]]" as="doc" index-as="docIndex">
+
+            <paper-card class="info-card" on-tap="docCardTapped">
+              <div class="card-content">
+
+                <div class="horizontal layout center">
+                
+                  <div class="serial-number">[[doc._id]]</div>
+                  <div class="flex"></div>
+
+                  <template is="dom-if" if="[[doc.__nedbmgr__.isRemovedFromRemoteServer]]">
+                    This document has been removed from database!
+                  </template>
+
+                  <template is="dom-if" if="[[!doc.__nedbmgr__.isRemovedFromRemoteServer]]">
+
+                    <template is="dom-if" if="[[doc.__nedbmgr__.isModified]]">
+                      <template is="dom-if" if="[[!doc.__nedbmgr__.errorMessage]]">
+                        <div hidden>[[docIndex]]</div>
+                        <paper-button on-tap="saveDocButtonTapped" class="doc-save-button" raised>Save</paper-button>
+                      </template>
+                      <div hidden>[[docIndex]]</div>
+                      <paper-button on-tap="resetDocButtonTapped" class="doc-reset-button" raised>Reset</paper-button>                    
+                    </template>
+                    <template is="dom-if" if="[[!doc.__nedbmgr__.isModified]]">
+                      <div hidden>[[docIndex]]</div>
+                      <paper-button on-tap="removeDocButtonTapped" class="doc-remove-button" raised>Remove</paper-button>
+                    </template>
+
+                  </template>
+
+                </div>
+
+                <template is="dom-if" if="[[$equals(selectedDocIndex, docIndex)]]">
+                  <div hidden>[[docIndex]]</div>
+                  <paper-textarea no-label-float class="doc-input" value="[[$makeDocText(doc, doc.__nedbmgr__.refreshKey)]]" on-keyup="docInputKeyPress" on-change="docInputKeyPress" max-rows="8"></paper-textarea>
+                </template>
+
+                <template is="dom-if" if="[[doc.__nedbmgr__.errorMessage]]">
+                  <div class="query-input-error">[[doc.__nedbmgr__.errorMessage]]</div>
+                </template>
+                  
+              </div>
+            </paper-card>            
+
+          </template>
+          <!-- results - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-search.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,61 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+<link rel="import" href="../../elements/html-block/html-block.html">
+
+<!-- element -->
+<dom-module id="page-dashboard">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="[[$ofHost('user', refreshKey)]]">
+          Hi, [[$ofHost('user.name', refreshKey)]].
+          <br><br>
+
+          Which database to open?
+          <paper-input value="{{dbPath}}"></paper-input>
+          <paper-button raised on-tap="openDbTapped">Open</paper-button>
+
+        </template>
+
+        <template is="dom-if" if="[[!$ofHost('user', refreshKey)]]">
+          login plz.
+        </template>
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-dashboard.coffee-compiled.js"></script>
+</dom-module>

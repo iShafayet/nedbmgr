@@ -1,0 +1,62 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-input/iron-input.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-material/paper-material.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-submenu.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+<!-- element -->
+<dom-module id="dev-tools">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+
+    </style>
+
+    <!-- local DOM -->
+
+    <paper-button on-tap="cleanseClicked">Cleanse</paper-button>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <pre>[[dbDump]]</pre>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+  </template>
+
+</dom-module>
+
+<script src="dev-tools.coffee-compiled.js"></script>

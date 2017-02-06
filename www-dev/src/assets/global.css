@@ -1,0 +1,31 @@
+
+/* === document-wide  === */
+
+body {
+  margin: 0px;
+  font-family: 'Roboto', 'Noto', sans-serif;
+  background-color: #eee;
+}
+
+/* === unsupported-screen-size-overlay  === */
+
+#unsupported-screen-size-overlay {
+  display: none;
+  background: white;
+  color: red;
+  font-size: 28px;
+  font-family: monospace;
+}
+
+@media screen and (max-width: 239px) {
+  #unsupported-screen-size-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+

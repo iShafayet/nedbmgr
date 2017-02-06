@@ -1,0 +1,56 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="common-style">
+
+  <style is="custom-style" include="iron-flex iron-flex-alignment">
+  /* === d-* are for debugging  === */
+  
+  .d-blue {
+    background: blue;
+  }
+  
+  .d-red {
+    background: red;
+  }
+  
+  .d-cyan {
+    background: cyan;
+  }
+  /* === master-container === */
+  
+  .master-container {
+    @apply(--layout-vertical);
+    @apply(--layout-center);
+  }
+  /* === limiting-container === */
+  
+  .limiting-container {
+    min-width: 320px;
+    max-width: 960px;
+    width: 100%;
+  }
+  /* === general purpose === */
+  
+  .break-on-tablet {
+    @apply(--layout-horizontal);
+  }
+  
+  @media screen and (max-width: 740px) {
+    .break-on-tablet {
+      display: block;
+    }
+  }
+  
+  .break-on-mobile {
+    @apply(--layout-horizontal);
+  }
+  
+  @media screen and (max-width: 480px) {
+    .break-on-mobile {
+      display: block;
+    }
+  }
+  </style>
+
+</dom-module>

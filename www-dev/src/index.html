@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <title>NeDBmgr 0.0.1</title>
+    <link rel="stylesheet" type="text/css" href="assets/global.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/favicon.png">
+
+    <!-- 
+      other known exposed globals - 
+        window.
+          'Polymer'
+
+      vendor exposed globals - 
+        window.
+          'evolvenode-stdlib'
+          'date-format-library'
+          'database-engine'
+
+      our exposed globals - 
+        window.
+          'lib'
+          'app'
+     -->
+
+    <!-- sjcl (encryption/hash) -->
+    <script type="text/javascript" src="vendor-assets/sjcl.js"></script>
+
+    <!-- pako (compression) -->
+    <script type="text/javascript" src="vendor-assets/pako.min.js"></script>
+
+    <!-- evolvenode-stdlib -->
+    <script type="text/javascript" src="vendor-assets/evolvenode-stdlib-0.0.3.js"></script>
+
+    <!-- date-format-library -->
+    <script type="text/javascript" src="vendor-assets/date-format-library.coffee-compiled.js"></script>
+
+    <!-- database-engine -->
+    <script type="text/javascript" src="vendor-assets/database-engine.coffee-compiled.js"></script>
+    
+    <!-- The webcomponents polyfill -->
+    <script type="text/javascript" src="bower-assets/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <!-- Set polymer's global settings -->
+    <script type="text/javascript">
+      window.Polymer = {
+        lazyRegister: false,
+        dom: 'Shady'
+      };
+    </script>
+
+    <!-- Config -->
+    <script type="text/javascript" src="assets/config.coffee-compiled.js"></script>
+
+    <!-- Pages -->
+    <script type="text/javascript" src="assets/pages.coffee-compiled.js"></script>
+    
+    <!-- Library (Connected to Config) -->
+    <script type="text/javascript" src="assets/lib.coffee-compiled.js"></script>
+
+    <!-- Database -->
+    <script type="text/javascript" src="assets/db.coffee-compiled.js"></script>
+
+    <!-- Languages -->
+    <script type="text/javascript" src="assets/lang.coffee-compiled.js"></script>
+
+    <!-- Initiation script (Needs library and config)-->
+    <script type="text/javascript" src="assets/app.coffee-compiled.js"></script>
+
+    <!-- Hookup area for future code injections -->
+    <script type="text/javascript">
+      // console.log(app)
+    </script>
+
+    <!-- Import root element -->
+    <link rel="import" href="/elements/root-element/root-element.html">
+    
+  </head>
+  <body>
+    <root-element></root-element>
+    <div id="unsupported-screen-size-overlay">
+      Sorry! Your screen resolution is too low for this application to function properly.
+    </div>
+  </body>
+</html>

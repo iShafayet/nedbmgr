@@ -1,0 +1,126 @@
+<!-- FIXME - This page can use some style updates -->
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+
+<!-- element -->
+<dom-module id="page-error-404">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+    .vline {
+      width: 1px;
+      min-height: 10px;
+      background: black;
+    }
+    
+    .containerLevel1 {
+      /*min-width: 600px;*/
+      max-width: 720px;
+      @apply(--layout-horizontal);
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .containerLevel1:first-child {
+      margin-top: 20px;
+    }
+    
+    .containerLevel1 .card.one {
+      margin-right: 10px;
+    }
+    
+    .containerLevel1 .card.one:last-child {
+      margin-right: 0px;
+    }
+    
+    .containerLevel1 .number {
+      font-size: 72px;
+    }
+    
+    .containerLevel1 .subtitle {
+      text-transform: uppercase;
+    }
+    
+    .containerLevel1 .vline {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+    
+    @media screen and (max-width: 720px) {
+      .containerLevel1 {
+        min-width: 600px;
+        @apply(--layout-vertical);
+      }
+      .containerLevel1 .card.one {
+        margin-right: 0px;
+        margin-bottom: 20px;
+      }
+    }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="vertical layout center" style="border: 0px solid red">
+
+      <!-- container level 1 - Start -->
+      <div class="containerLevel1" style="border: 0px solid blue">
+
+        <paper-card class="card one vertical layout center">
+          <div class="card-content horizontal layout">
+            <div class="vertical layout center">
+              <div class="number">4</div>
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card class="card one vertical layout center">
+          <div class="card-content horizontal layout">
+            <div class="vertical layout center">
+              <div class="number">0</div>
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card class="card one vertical layout center">
+          <div class="card-content horizontal layout">
+            <div class="vertical layout center">
+              <div class="number">4</div>
+            </div>
+          </div>
+        </paper-card>
+
+      </div>
+      <!-- container level 1 - End -->
+
+      <!-- container level 1 - Start -->
+      <div class="containerLevel1" style="border: 0px solid blue">
+
+        <paper-card class="card one vertical layout center">
+          <div class="card-content horizontal layout center">
+            <div style="padding-left: 20px">
+              The requested content could not <br>
+              be found.
+            </div>
+          </div>
+          <div class="card-actions">
+            <paper-button on-tap="goToHomepageButtonPressed">Home</paper-button>
+          </div>
+        </paper-card>
+
+      </div>
+
+      <!-- container level 1 - End -->
+
+    </div>
+
+  </template>
+  <script src="page-error-404.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,14 @@
+# for nodejs
+dist
+node_modules
+build
+
+# for gulp
+.build-debug
+build-release
+
+# testing
+ignore-me
+
+# os x specific
+.DS_Store

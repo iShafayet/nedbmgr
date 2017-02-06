@@ -1,0 +1,104 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<dom-module id="dynamic-element-styles">
+
+  <style is="custom-style" include="iron-flex iron-flex-alignment">
+  .generic-container {
+    /*max-width: 400px;*/
+    width: 100%;
+    margin: 4px;
+
+  }
+  
+  .title {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: #212121;
+    color: white;
+    min-height: 32px;
+    @apply(--layout-horizontal);
+    @apply(--layout-center);
+  }
+  
+  .title paper-checkbox {
+    --paper-checkbox-unchecked-color: white;
+    --paper-checkbox-label-color: white;
+  }
+  
+  .content {
+    background: #F5F5F5;
+    padding: 10px;
+  }
+
+  .content:empty {
+    padding: 0px;
+  }
+
+  /* styleSet1 */
+  
+  .styleSet1 .title {
+    background: #009688;
+  }
+  
+  .styleSet1 .content {
+    background: #E0F2F1;
+  }
+  /* styleSet2 */
+  
+  .styleSet2 .title {
+    background: #4CAF50;
+  }
+  
+  .styleSet2 .content {
+    background: #E8F5E9;
+  }
+  /* styleSet3 */
+  
+  .styleSet3 .title {
+    background: #4A148C;
+  }
+  
+  .styleSet3 .content {
+    background: #E1BEE7;
+  }
+  /* styleSet4 */
+  
+  .styleSet4 .title {
+    background: #311B92;
+  }
+  
+  .styleSet4 .content {
+    background: #D1C4E9;
+  }
+  /* styleSet5 */
+  
+  .styleSet5 .title {
+    background: #1A237E;
+  }
+  
+  .styleSet5 .content {
+    background: #C5CAE9;
+  }
+  /* styleSet6 */
+  
+  .styleSet6 .title {
+    background: #0D47A1;
+  }
+  
+  .styleSet6 .content {
+    background: #BBDEFB;
+  }
+  /* styleSet7 */
+  
+  .styleSet7 .title {
+    background: #01579B;
+  }
+  
+  .styleSet7 .content {
+    background: #B3E5FC;
+  }
+  </style>
+
+</dom-module>
