@@ -20,7 +20,6 @@ internal = require './internal'
 
   server = new Hapi.Server
   server.connection { 
-    host: options.apiServer.host
     port: options.apiServer.port
     routes:
       cors: true
