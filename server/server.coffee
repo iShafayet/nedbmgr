@@ -10,13 +10,17 @@ internal = require './internal'
 } = require './utilities'
 
 { 
+  useExternalDatabase
   openDatabaseFile
   runQuery
   updateSingleDoc
   removeSingleDoc
 } = require './functions'
 
-@createNedbmgrServer = (options)->
+@createNedbmgrServer = (options, nedbDatabaseObject, externCbfn)->
+
+  if nedbDatabaseObject
+    useExternalDatabase nedbDatabaseObject
 
   server = new Hapi.Server
   server.connection { 

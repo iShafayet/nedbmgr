@@ -1,8 +1,6 @@
 nedbmgr
 ================================
 
-**WARNING! THIS PROJECT IS CURRENTLY BEING ACTIVELY DEVELOPED AND NOT READY FOR PRODUCTION AT ALL.**
-
 `nedbmgr` or NeDB Manager is a basic and scriptable/customizable database manager for NeDB databases (NeDB, he JavaScript Database, for Node.js, nw.js, electron and the browser, find more in https://github.com/louischatriot/nedb)
 
 ## Concept

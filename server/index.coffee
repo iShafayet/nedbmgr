@@ -9,9 +9,17 @@ defaultOptions = {
   db:
     readonly: false
     allowBulkQueries: true
-    AllowNonAdminTo:
+    allowNonAdminTo:
       useStoredFunctions: true
       modifyStoredFunctions: false
+    allowCustomDatabaseFilePath: true
+    allowCustomDatabaseFilePathExceedRoot: false
+    allowedDatabaseFileList: [
+      {
+        name: 'My Db 1'
+        path: './path-to-my-db'
+      }
+    ]
   log:
     filePath: './nedbmgr.log'
     requests: true
@@ -45,6 +53,8 @@ optionsThatAreCurrentlySupported = {
     host: 'localhost'
 }
 
-createNedbmgrServer optionsThatAreCurrentlySupported, (err)=>
-  if err
-    throw err
+@createStandaloneServer = (opt, cbfn)->
+  createNedbmgrServer opt, null, cbfn
+
+@createParasiteServer = (opt, nedbDatabaseObject, cbfn)->
+  createNedbmgrServer opt, nedbDatabaseObject, cbfn

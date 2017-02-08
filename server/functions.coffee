@@ -3,7 +3,8 @@ NedbDatastore = require('nedb')
 
 db = null
 
-openedDatabaseFilePath = null
+@useExternalDatabase = (externalNedbObject)->
+  db = externalNedbObject
 
 @openDatabaseFile = (filepath, cbfn)->
   db = new NedbDatastore { filename: filepath }
