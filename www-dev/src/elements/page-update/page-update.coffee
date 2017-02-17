@@ -1,7 +1,7 @@
 
 Polymer {
 
-  is: 'page-search'
+  is: 'page-update'
 
   behaviors: [ 
     app.behaviors.commonComputes
@@ -19,21 +19,41 @@ Polymer {
           collection: 'user-info'
         JSON.stringify object, null, 0
       observer: 'queryStringAltered'
+    updateString:
+      type: String
+      value: ->
+        object = 
+          $set: 
+            'testProp': 'test value'
+        JSON.stringify object, null, 0
+      observer: 'updateStringAltered'
     queryInputErrorMessage:
+      type: String
+      value: ''
+    updateInputErrorMessage:
       type: String
       value: ''
     resultMessage:
       type: String
       value: 'Results will appear here.'
+
+    shouldReturnUpdatedDocList:
+      type: Boolean
+      value: false
+
     skip:
       type: Number
       value: 0
     limit:
       type: Number
       value: 20
+
     lastQueryTimeTaken:
       type: Number
       value: 0
+    lastAction:
+      type: String
+      value: ''
     totalCount:
       type: Number
       value: 0
@@ -63,16 +83,33 @@ Polymer {
     @queryInputErrorMessage = ''
     return object
 
+  _validateUpdateString: ->
+    try
+      object = JSON.parse @updateString
+    catch ex
+      @updateInputErrorMessage = ex.message
+      return null
+    @updateInputErrorMessage = ''
+    return object
+
   queryStringAltered: ->
     if @queryString.length isnt 0
       @_validateQueryString()
+
+  updateStringAltered: ->
+    if @updateString.length isnt 0
+      @_validateUpdateString()
 
   prettifyButtonTapped: (e)->
     if object = @_validateQueryString()
       string = JSON.stringify object, null, 2
       @queryString = string
+    if object = @_validateUpdateString()
+      string = JSON.stringify object, null, 2
+      @updateString = string
 
   _runQuery: (object, cbfn)->
+    @lastAction = 'query'
     token = (new Date).getTime()
     @callQueryApi {
       "apiKey": @domHost.user.apiKey,
@@ -89,7 +126,12 @@ Polymer {
   _updateResultMessage: ->
     @resultMessage = ''
     msg = "Query took #{@lastQueryTimeTaken}ms. "
-    msg += "showing #{@docList.length} items out of #{@totalCount} starting from index #{@skip}"
+    if (@lastAction is 'bulk-delete')
+      msg += "Total #{@totalCount} items deleted."
+    else if (@lastAction is 'bulk-update' and not @shouldReturnUpdatedDocList)
+      msg += "Total #{@totalCount} items matched/affected."
+    else
+      msg += "showing #{@docList.length} items out of #{@totalCount} starting from index #{@skip}"
     @resultMessage = msg
 
   runQueryButtonTapped: (e)->
@@ -97,80 +139,63 @@ Polymer {
       @_runQuery object, (timeTaken, {count, docList})=>
         @lastQueryTimeTaken = timeTaken
         @totalCount = count
-
-        for doc in docList
-          doc.__nedbmgr__ = 
-            isModified: false
-            refreshKey: 0
-            errorMessage: ''
-            value: null
-            isRemovedFromRemoteServer: false
         @docList = docList
-
         @_updateResultMessage()
         @selectedDocIndex = 0
 
-  docCardTapped: (e)->
-    { docIndex } = e.model
-    @selectedDocIndex = docIndex
-    
-  docInputKeyPress: (e)->
-    { docIndex } = e.model
-    doc = @docList[docIndex]
-    @set "docList.#{docIndex}.__nedbmgr__.isModified", true
-    value = e.target.value
-    @set "docList.#{docIndex}.__nedbmgr__.value", value
-    [ err, object ] = @_validateJson value
-    if err
-      @set "docList.#{docIndex}.__nedbmgr__.errorMessage", err
-    else
-      @set "docList.#{docIndex}.__nedbmgr__.errorMessage", ''
+  _bulkUpdate: (cbfn)->
+    @lastAction = 'bulk-update'
+    token = (new Date).getTime()
+    @callBulkUpdateApi {
+      "apiKey": @domHost.user.apiKey,
+      "query": @queryString
+      "updateCommand": @updateString
+      "shouldReturnUpdatedDocList": @shouldReturnUpdatedDocList
+    }, (err, response)=>
+      if response.statusCode isnt 200
+        @domHost.showModalDialog response.message
+      else
+        timeTaken = (new Date).getTime() - token
+        cbfn timeTaken, response.data
 
-  resetDocButtonTapped: (e)->
-    { docIndex } = e.model
-    doc = @docList[docIndex]
-    refreshKey = @get "docList.#{docIndex}.__nedbmgr__.refreshKey"
-    refreshKey += 1
-    @set "docList.#{docIndex}.__nedbmgr__.refreshKey", refreshKey
-    @set "docList.#{docIndex}.__nedbmgr__.isModified", false
-    @set "docList.#{docIndex}.__nedbmgr__.errorMessage", ''
+  _bulkDelete: (cbfn)->
+    @lastAction = 'bulk-delete'
+    token = (new Date).getTime()
+    @callBulkDeleteApi {
+      "apiKey": @domHost.user.apiKey,
+      "query": @queryString
+    }, (err, response)=>
+      if response.statusCode isnt 200
+        @domHost.showModalDialog response.message
+      else
+        timeTaken = (new Date).getTime() - token
+        cbfn timeTaken, response.data
 
-  removeDocButtonTapped: (e)->
-    { docIndex } = e.model
-    doc = @docList[docIndex]
-    @domHost.showModalPrompt "Are you sure?", (answer)=>
+
+  updateAllMatchingQueryButtonTapped: (e)->
+    @domHost.showModalPrompt "This will update all the documents that match the query. This is an irreverible action. Are you sure you want to proceed?", (answer)=>
       return unless answer
-      @callRemoveDocApi {
-        "apiKey": @domHost.user.apiKey,
-        "id": doc._id
-      }, (err, response)=>
-        if response.statusCode isnt 200
-          @domHost.showModalDialog response.message
-        else
-          @domHost.showToast 'Delete successful.'
-          @set "docList.#{docIndex}.__nedbmgr__.isRemovedFromRemoteServer", true
+      if @_validateQueryString() and @_validateUpdateString()
+        @_bulkUpdate (timeTaken, {count, docList})=>
+          @lastQueryTimeTaken = timeTaken
+          @totalCount = count
+          if docList
+            @docList = docList
+          else
+            @docList = []
+          @_updateResultMessage()
+          @selectedDocIndex = 0
 
-  saveDocButtonTapped: (e)->
-    { docIndex } = e.model
-    doc = @docList[docIndex]
-    @domHost.showModalPrompt "Are you sure?", (answer)=>
+  eraseAllMatchingQueryButtonTapped: (e)->
+    @domHost.showModalPrompt "This will completely erase all the documents that match the query. This is an irreverible action. Are you sure you want to proceed?", (answer)=>
       return unless answer
-      
-      newDoc = JSON.parse (@get "docList.#{docIndex}.__nedbmgr__.value")
-      newDoc._id = doc._id
-
-      @callUpdateDocApi {
-        "apiKey": @domHost.user.apiKey,
-        "doc": newDoc
-      }, (err, response)=>
-        if response.statusCode isnt 200
-          @domHost.showModalDialog response.message
-        else
-          doc.__nedbmgr__.refreshKey += 1
-          doc.__nedbmgr__.isModified = false
-          newDoc.__nedbmgr__ = doc.__nedbmgr__
-          @set "docList.#{docIndex}", newDoc
-          @domHost.showToast 'Update successful.'
+      if object = @_validateQueryString()
+        @_bulkDelete (timeTaken, { count })=>
+          @lastQueryTimeTaken = timeTaken
+          @totalCount = count
+          @docList = []
+          @_updateResultMessage()
+          @selectedDocIndex = 0
 
   $makeDocText: (doc)->
     text = JSON.stringify doc
@@ -192,16 +217,6 @@ Polymer {
   navigatedIn: ->
     @_checkOpenedDatabasesAndSelectDefault()
 
-  shortcutFirstPageTapped: (e)->
-    @skip = 0
-    @runQueryButtonTapped()
 
-  shortcutPrevPageTapped: (e)->
-    @skip = Math.max 0, ((parseInt @skip) - (parseInt @limit))
-    @runQueryButtonTapped()
-
-  shortcutNextPageTapped: (e)->
-    @skip = ((parseInt @skip) + (parseInt @limit))
-    @runQueryButtonTapped()
 
 }

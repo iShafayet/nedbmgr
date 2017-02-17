@@ -34,3 +34,12 @@ app.behaviors.apiCalling =
   callRemoveDocApi: (data, cbfn)->
     @callApi 'remove-doc', data, (err, response)=>
       cbfn err, response
+
+  callBulkUpdateApi: (data, cbfn)->
+    @callApi 'bulk-update', data, (err, response)=>
+      cbfn err, response
+
+  callBulkDeleteApi: (data, cbfn)->
+    @callApi 'bulk-delete', data, (err, response)=>
+      cbfn err, response
+

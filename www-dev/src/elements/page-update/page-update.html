@@ -18,7 +18,6 @@
 <link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
 
 <!-- style -->
 <link rel="import" href="../../styles/common-style.html">
@@ -32,7 +31,7 @@
 <!-- custom-elements -->
 
 <!-- element -->
-<dom-module id="page-search">
+<dom-module id="page-update">
   <template>
 
     <!-- style -->
@@ -86,6 +85,12 @@
       font-size: 14px;
     }
     
+    .skip-input {
+      width: 80px;
+      margin-left: 4px;
+      margin-right: 4px;
+    }
+    
     .limiting-container {
       max-width: 920px
     }
@@ -97,15 +102,15 @@
       }
     }
     
+    .update-input {
+      --iron-autogrow-textarea: {
+        font-family: monospace !important;
+      }
+    }
+    
     .query-input-error {
       color: red;
       margin-top: 10px;
-    }
-    
-    .skip-input {
-      width: 80px;
-      margin-left: 4px;
-      margin-right: 4px;
     }
     
     .prettify-button {
@@ -118,6 +123,11 @@
       color: white;
     }
     
+    .erase-query-button {
+      background: #FF5722;
+      color: white;
+    }
+    
     .doc-input {
       --iron-autogrow-textarea: {
         font-family: monospace !important;
@@ -127,25 +137,6 @@
         padding: 4px !important;
         border-left: 8px solid #546E7A !important;
       }
-    }
-    
-    .doc-input.error {
-      border: 2px solid #BBDEFB;
-    }
-    
-    .doc-save-button {
-      background: #2196F3;
-      color: white;
-    }
-    
-    .doc-reset-button {
-      background: #795548;
-      color: white;
-    }
-    
-    .doc-remove-button {
-      background: #FF5722;
-      color: white;
     }
     </style>
 
@@ -163,23 +154,29 @@
         <paper-card class="info-card">
           <div class="card-content">
 
-            <paper-textarea class="query-input" value="{{queryString}}" rows="6"></paper-textarea>
+            <paper-textarea label="Query" class="query-input" value="{{queryString}}" rows="6"></paper-textarea>
 
             <template is="dom-if" if="[[queryInputErrorMessage]]">
               <div class="query-input-error">[[queryInputErrorMessage]]</div>
             </template>
 
+            <paper-textarea label="Updated doc / modifier" class="update-input" value="{{updateString}}" rows="6"></paper-textarea>
+
+            <template is="dom-if" if="[[updateInputErrorMessage]]">
+              <div class="query-input-error">[[updateInputErrorMessage]]</div>
+            </template>
+
             <div class="horizontal layout center">
 
-              
-              <paper-icon-button on-tap="shortcutFirstPageTapped" icon="rowing"><!-- first-page --></paper-icon-button>
-              <paper-icon-button on-tap="shortcutPrevPageTapped" icon="chevron-left"></paper-icon-button>
-              <paper-input label="Skip" always-float-label class="skip-input" type="number" value="{{skip}}"></paper-input>
-              <paper-input label="Limit" always-float-label class="skip-input" type="number" value="{{limit}}"></paper-input>
-              <paper-icon-button on-tap="shortcutNextPageTapped"  icon="chevron-right"></paper-icon-button>
+              <!-- <paper-input label="Skip" always-float-label class="skip-input" type="number" value="{{skip}}"></paper-input> -->
+              <!-- <paper-input label="Limit" always-float-label class="skip-input" type="number" value="{{limit}}"></paper-input> -->
+              <paper-checkbox checked="{{shouldReturnUpdatedDocList}}">Return updated documents</paper-checkbox>
               <div class="flex"></div>
+
               <paper-button on-tap="prettifyButtonTapped" class="prettify-button" raised>Prettify</paper-button>
-              <paper-button on-tap="runQueryButtonTapped" class="run-query-button" raised>Run</paper-button>
+              <paper-button on-tap="runQueryButtonTapped" class="run-query-button" raised>Query Sample</paper-button>
+              <paper-button on-tap="updateAllMatchingQueryButtonTapped" class="run-query-button" raised>Update All</paper-button>
+              <paper-button on-tap="eraseAllMatchingQueryButtonTapped" class="erase-query-button" raised>Erase All</paper-button>
             </div>
 
           </div>
@@ -193,45 +190,16 @@
 
         <template is="dom-repeat" items="[[docList]]" as="doc" index-as="docIndex">
 
-          <paper-card class="info-card" on-tap="docCardTapped">
+          <paper-card class="info-card">
             <div class="card-content">
 
               <div class="horizontal layout center">
 
                 <div class="serial-number">[[doc._id]]</div>
-                <div class="flex"></div>
-
-                <template is="dom-if" if="[[doc.__nedbmgr__.isRemovedFromRemoteServer]]">
-                  This document has been removed from database!
-                </template>
-
-                <template is="dom-if" if="[[!doc.__nedbmgr__.isRemovedFromRemoteServer]]">
-
-                  <template is="dom-if" if="[[doc.__nedbmgr__.isModified]]">
-                    <template is="dom-if" if="[[!doc.__nedbmgr__.errorMessage]]">
-                      <div hidden>[[docIndex]]</div>
-                      <paper-button on-tap="saveDocButtonTapped" class="doc-save-button" raised>Save</paper-button>
-                    </template>
-                    <div hidden>[[docIndex]]</div>
-                    <paper-button on-tap="resetDocButtonTapped" class="doc-reset-button" raised>Reset</paper-button>
-                  </template>
-                  <template is="dom-if" if="[[!doc.__nedbmgr__.isModified]]">
-                    <div hidden>[[docIndex]]</div>
-                    <paper-button on-tap="removeDocButtonTapped" class="doc-remove-button" raised>Remove</paper-button>
-                  </template>
-
-                </template>
 
               </div>
 
-              <template is="dom-if" if="[[$equals(selectedDocIndex, docIndex)]]">
-                <div hidden>[[docIndex]]</div>
-                <paper-textarea no-label-float class="doc-input" value="[[$makeDocText(doc, doc.__nedbmgr__.refreshKey)]]" on-keyup="docInputKeyPress" on-change="docInputKeyPress" max-rows="8"></paper-textarea>
-              </template>
-
-              <template is="dom-if" if="[[doc.__nedbmgr__.errorMessage]]">
-                <div class="query-input-error">[[doc.__nedbmgr__.errorMessage]]</div>
-              </template>
+              <paper-textarea readonly no-label-float class="doc-input" value="[[$makeDocText(doc)]]" max-rows="8"></paper-textarea>
 
             </div>
           </paper-card>
@@ -244,5 +212,5 @@
     </div>
 
   </template>
-  <script src="page-search.coffee-compiled.js"></script>
+  <script src="page-update.coffee-compiled.js"></script>
 </dom-module>

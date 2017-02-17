@@ -45,6 +45,19 @@ app.pages.pageList = [
     hideLoginButton: true
   }
   {
+    name: 'update'
+    element: 'page-update'
+    windowTitlePostfix: 'Bulk Update'
+    headerTitle: 'Bulk Update'
+    preload: true
+    hrefList: [ 'update' ]
+    requireAuthentication : true
+    headerType: 'normal'
+    leftMenuEnabled: true
+    showBackButton: true
+    hideLoginButton: true
+  }
+  {
     name: 'search'
     element: 'page-search'
     windowTitlePostfix: 'Search and Edit'
@@ -52,7 +65,7 @@ app.pages.pageList = [
     preload: true
     hrefList: [ 'search' ]
     requireAuthentication : true
-    headerType: 'modal'
+    headerType: 'normal'
     leftMenuEnabled: true
     showBackButton: true
     hideLoginButton: true

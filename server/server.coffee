@@ -10,6 +10,8 @@ internal = require './internal'
 } = require './utilities'
 
 { 
+  bulkDelete
+  bulkUpdate
   useExternalDatabase
   openDatabaseFile
   runQuery
@@ -89,6 +91,55 @@ internal = require './internal'
               return reply handleError err
             else
               return reply makeStandardReply { count, docList }
+
+  server.route
+    method: 'POST'
+    path: '/api/1/bulk-update'
+    config: 
+      validate: 
+        payload:
+          apiKey: Joi.string().required()
+          query: Joi.object().required()
+          updateCommand: Joi.object().required()
+          shouldReturnUpdatedDocList: Joi.boolean().required()
+          '__meta': Joi.object()
+    handler: (request, reply) ->
+      { apiKey, query, updateCommand, shouldReturnUpdatedDocList } = request.payload
+      internal.getUserIdFromApiKey apiKey, (err, userId)=>
+        if err
+          return reply handleError err
+        else
+          bulkUpdate query, updateCommand, (err, count)=>
+            if err
+              return reply handleError err
+            else
+              if shouldReturnUpdatedDocList
+                runQuery query, 0, 9999, (err, _, docList)=>
+                  return reply makeStandardReply { count, docList }
+              else
+                return reply makeStandardReply { count }
+
+
+  server.route
+    method: 'POST'
+    path: '/api/1/bulk-delete'
+    config: 
+      validate: 
+        payload:
+          apiKey: Joi.string().required()
+          query: Joi.object().required()
+          '__meta': Joi.object()
+    handler: (request, reply) ->
+      { apiKey, query, } = request.payload
+      internal.getUserIdFromApiKey apiKey, (err, userId)=>
+        if err
+          return reply handleError err
+        else
+          bulkDelete query, (err, count)=>
+            if err
+              return reply handleError err
+            else
+              return reply makeStandardReply { count }
 
   server.route
     method: 'POST'

@@ -17,6 +17,26 @@ ensureDatabaseIsOpen = (failCbfn, successCbfn)->
   else
     setImmediate successCbfn
 
+@bulkUpdate = bulkUpdate = (query, updateCommand, cbfn)->
+  ensureDatabaseIsOpen cbfn, =>
+    options = {
+      multi: true
+    }
+    db.update query, updateCommand, options, (err, count)=>
+      if err
+        return cbfn err
+      return cbfn err, count
+
+@bulkDelete = bulkDelete = (query, cbfn)->
+  ensureDatabaseIsOpen cbfn, =>
+    options = {
+      multi: true
+    }
+    db.remove query, options, (err, count)=>
+      if err
+        return cbfn err
+      return cbfn err, count
+
 @runQuery = runQuery = (query, skip, limit, cbfn)->
   ensureDatabaseIsOpen cbfn, =>
     db.count query, (err, count)=>

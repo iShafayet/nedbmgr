@@ -27,6 +27,10 @@ app.db.defineCollection {
 }
 
 app.db.defineCollection {
+  name: 'opened-database-meta'
+}
+
+app.db.defineCollection {
   name: 'settings'
 }
 
