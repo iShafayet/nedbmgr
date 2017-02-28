@@ -38,6 +38,14 @@ Polymer {
       type: Object
       value: null
 
+    openedDatabaseList:
+      type: Array
+      value: -> []
+
+    activeDatabaseSelectedIndex: 
+      type: Number
+      value: 0
+
     currentNavigationCandidate:
       type: String
       value: ''
@@ -209,6 +217,7 @@ Polymer {
     @_fillIronPagesFromPageList()
     ## UI Tweaks
     @$$('app-drawer-layout').responsiveWidth = '1440px'
+    @updateOpenedDatabaseList()
 
   refreshButtonPressed: (e)->
     @reloadPage()
@@ -338,7 +347,21 @@ Polymer {
     else
       lib.util.delay (950 - diff), => @_clockUpdateStep()
 
+  updateOpenedDatabaseList: ->
+    if @user.apiKey
+      @callGetOpenedDatabaseListApi {
+        "apiKey": @user.apiKey
+      }, (err, response)=>
+        if response.statusCode isnt 200
+          @showModalDialog response.message
+        else
+          { openedDatabaseList } = response.data
+          @openedDatabaseList = []
+          @openedDatabaseList = openedDatabaseList
 
+  $isTruthy: (value)-> return value
 
+  noDatabaseOpenedTapped: (e)->
+    @navigateToPage '#/'
 
 }

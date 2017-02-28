@@ -22,25 +22,20 @@ Polymer {
 
   navigatedIn: ->
     @refreshKey = @refreshKey + 1
+    
 
   openDbTapped: (e)->
     @callOpenDbApi {
       "apiKey": @domHost.user.apiKey,
       "path": @dbPath
     }, (err, response)=>
-      openedDatabaseMeta = {
-        which: 'only'
-        count: 0
-        dbIdentifierList: []
-      }
       if response.statusCode isnt 200
         @domHost.showModalDialog response.message
       else
         if response.data.opened
           @domHost.showModalDialog "Database Opened"
-          openedDatabaseMeta.count += 1
-          openedDatabaseMeta.dbIdentifierList.push 'primary-db'
-      app.db.upsert 'opened-database-meta', openedDatabaseMeta, ({which})-> which is 'only'
+          @domHost.updateOpenedDatabaseList()
+
 
 
 }

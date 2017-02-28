@@ -43,20 +43,23 @@ Polymer {
     selectedDocIndex:
       type: Number
       value: 0
+
+  parseJsonForQuery: (json)->
+    return JSON.parse json
       
   arrowBackButtonPressed: (e)->
     @domHost.navigateToPreviousPage()
 
   _validateJson: (json)->
     try
-      object = JSON.parse json
+      object = @parseJsonForQuery json
     catch ex
       return [ ex.message, null ]
     return [ null, object ]
 
   _validateQueryString: ->
     try
-      object = JSON.parse @queryString
+      object = @parseJsonForQuery @queryString
     catch ex
       @queryInputErrorMessage = ex.message
       return null
@@ -156,7 +159,7 @@ Polymer {
     @domHost.showModalPrompt "Are you sure?", (answer)=>
       return unless answer
       
-      newDoc = JSON.parse (@get "docList.#{docIndex}.__nedbmgr__.value")
+      newDoc = @parseJsonForQuery (@get "docList.#{docIndex}.__nedbmgr__.value")
       newDoc._id = doc._id
 
       @callUpdateDocApi {
@@ -174,7 +177,7 @@ Polymer {
 
   $makeDocText: (doc)->
     text = JSON.stringify doc
-    object = JSON.parse text
+    object = @parseJsonForQuery text
     delete object['_id'] if '_id' of object
     delete object['__nedbmgr__'] if '__nedbmgr__' of object
     text = JSON.stringify object, null, 2

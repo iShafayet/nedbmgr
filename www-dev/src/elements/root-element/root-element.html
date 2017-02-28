@@ -9,7 +9,10 @@
 <link rel="import" href="../../bower-assets/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower-assets/app-route/app-route.html">
 <link rel="import" href="../../bower-assets/app-route/app-location.html">
-
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
 <!-- iron-* -->
 <link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
@@ -113,6 +116,24 @@
     .login-button-group {
       cursor: pointer;
     }
+    
+    paper-dropdown-menu-light.custom {
+      --paper-dropdown-menu-label: {
+        color: white;
+
+      };
+      --paper-dropdown-menu-input: {
+        color: white;
+      };
+      --paper-dropdown-menu-ripple: {
+        color: white;
+      };
+    }
+
+    .no-database-opened {
+      text-decoration: underline;
+      cursor: pointer;
+    }
     </style>
 
     <!-- local DOM -->
@@ -187,6 +208,21 @@
             <template is="dom-if" if="[[apiActions.count]]">
               <paper-icon-button id="apiActionsIcon" icon="swap-vertical-circle"></paper-icon-button>
               <paper-badge for="apiActionsIcon" label="[[apiActions.count]]"></paper-badge>
+            </template>
+
+            <template is="dom-if" if="[[!$isTruthy(openedDatabaseList.length)]]">
+              <div class="no-database-opened" on-tap="noDatabaseOpenedTapped">No Database Opened</div>
+            </template>
+
+            <template is="dom-if" if="[[$isTruthy(openedDatabaseList.length)]]">
+
+              <paper-dropdown-menu-light label="Active Database" class="custom flex">
+                <paper-listbox class="dropdown-content" selected="{{activeDatabaseSelectedIndex}}">
+                  <template is="dom-repeat" items="[[openedDatabaseList]]" as="openedDatabase">
+                    <paper-item>[[openedDatabase.name]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu-light>
             </template>
 
             <!-- 

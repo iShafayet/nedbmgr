@@ -3,11 +3,19 @@ Hapi = require('hapi')
 Good = require('good')
 Joi = require('joi')
 
-internal = require './internal'
 { 
+  normalizeOptions 
+} = require './fn-options'
+
+{ 
+  userLogin
+  getUserIdFromApiKey 
+} = require './fn-user'
+
+{
   handleError
   makeStandardReply 
-} = require './utilities'
+} = require './fn-api'
 
 { 
   bulkDelete
@@ -17,19 +25,25 @@ internal = require './internal'
   runQuery
   updateSingleDoc
   removeSingleDoc
-} = require './functions'
+  getOpenedDatabaseList
+} = require './fn-db'
 
 @createNedbmgrServer = (options, nedbDatabaseObject, externCbfn)->
+
+  options = normalizeOptions options
 
   if nedbDatabaseObject
     useExternalDatabase nedbDatabaseObject
 
   server = new Hapi.Server
-  server.connection { 
+  hapiServerOptions = { 
     port: options.apiServer.port
     routes:
       cors: true
   }
+  if options.apiServer.host
+    hapiServerOptions.host = options.apiServer.host
+  server.connection hapiServerOptions
 
   server.route
     method: 'POST'
@@ -42,7 +56,7 @@ internal = require './internal'
           '__meta': Joi.object()
     handler: (request, reply) ->
       { emailOrPhone, password } = request.payload
-      internal.login emailOrPhone, password, (err, { apiKey, name })=>
+      userLogin emailOrPhone, password, (err, { apiKey, name })=>
         if err
           return reply handleError err
         else
@@ -59,7 +73,7 @@ internal = require './internal'
           '__meta': Joi.object()
     handler: (request, reply) ->
       { apiKey, path } = request.payload
-      internal.getUserIdFromApiKey apiKey, (err, userId)=>
+      getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
@@ -68,6 +82,25 @@ internal = require './internal'
               return reply handleError err
             else
               return reply makeStandardReply { opened: true }
+
+  server.route
+    method: 'POST'
+    path: '/api/1/get-opened-db-list'
+    config: 
+      validate: 
+        payload:
+          apiKey: Joi.string().required()
+          '__meta': Joi.object()
+    handler: (request, reply) ->
+      { apiKey, path } = request.payload
+      getUserIdFromApiKey apiKey, (err, userId)=>
+        if err
+          return reply handleError err
+        else
+          openedDatabaseList = getOpenedDatabaseList()
+          return reply makeStandardReply { openedDatabaseList }
+          
+          
 
   server.route
     method: 'POST'
@@ -82,7 +115,7 @@ internal = require './internal'
           '__meta': Joi.object()
     handler: (request, reply) ->
       { apiKey, query, skip, limit } = request.payload
-      internal.getUserIdFromApiKey apiKey, (err, userId)=>
+      getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
@@ -105,7 +138,7 @@ internal = require './internal'
           '__meta': Joi.object()
     handler: (request, reply) ->
       { apiKey, query, updateCommand, shouldReturnUpdatedDocList } = request.payload
-      internal.getUserIdFromApiKey apiKey, (err, userId)=>
+      getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
@@ -131,7 +164,7 @@ internal = require './internal'
           '__meta': Joi.object()
     handler: (request, reply) ->
       { apiKey, query, } = request.payload
-      internal.getUserIdFromApiKey apiKey, (err, userId)=>
+      getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
@@ -152,7 +185,7 @@ internal = require './internal'
           '__meta': Joi.object()
     handler: (request, reply) ->
       { apiKey, doc } = request.payload
-      internal.getUserIdFromApiKey apiKey, (err, userId)=>
+      getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
@@ -173,7 +206,7 @@ internal = require './internal'
           '__meta': Joi.object()
     handler: (request, reply) ->
       { apiKey, id } = request.payload
-      internal.getUserIdFromApiKey apiKey, (err, userId)=>
+      getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else

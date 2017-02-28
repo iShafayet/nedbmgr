@@ -14,7 +14,7 @@ defaultOptions = {
       modifyStoredFunctions: false
     allowCustomDatabaseFilePath: true
     allowCustomDatabaseFilePathExceedRoot: false
-    allowedDatabaseFileList: [
+    predefinedDatabaseFileList: [
       {
         name: 'My Db 1'
         path: './path-to-my-db'

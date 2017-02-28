@@ -19,3 +19,16 @@ The management of a noSQL database or a non-relational database is rather differ
 6. Validating queries (checking compliance with nedb)
 7. Aggregate Coffee-script/Javascript Code to JSON
 
+
+## Notes
+
+Partial Search and Regex
+```
+{
+  "collection": "user-info",
+  "name.first": {
+    "$exp": "john",
+    "$flags": "i"
+  }
+}
+```
