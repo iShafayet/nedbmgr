@@ -66,6 +66,14 @@ Polymer {
       type: Number
       notify: true
 
+    hasLoadingStarted:
+      type: Boolean
+      value: true
+
+    hasLoadingFinished:
+      type: Boolean
+      value: false
+
   observers: [ 
     '_routerHrefChanged(routeData.page)'
   ]
@@ -160,16 +168,22 @@ Polymer {
     else
       @user = null
     
-    if wasPageFound
-      if possiblePage.requireAuthentication
-        if @isUserLoggedIn()
-          @page = possiblePage
+    @openedDatabaseFn = =>
+      if wasPageFound
+        if possiblePage.requireAuthentication
+          if @isUserLoggedIn()
+            @page = possiblePage
+          else
+            @navigateToPage '#/login'
         else
-          @navigateToPage '#/login'
+          @page = possiblePage
       else
-        @page = possiblePage
+        @page = app.pages.error404
+
+    if @user and @user.apiKey
+      @_callOpenedDatabaseFn()
     else
-      @page = app.pages.error404
+      @openedDatabaseFn()
 
   _preloadOtherPages: ->
     # @debug '_preloadOtherPages'
@@ -216,7 +230,7 @@ Polymer {
   ready: ->
     @_fillIronPagesFromPageList()
     ## UI Tweaks
-    @$$('app-drawer-layout').responsiveWidth = '1440px'
+    @$$('app-drawer-layout').responsiveWidth = '14400px'
     @updateOpenedDatabaseList()
 
   refreshButtonPressed: (e)->
@@ -347,8 +361,19 @@ Polymer {
     else
       lib.util.delay (950 - diff), => @_clockUpdateStep()
 
+  _callOpenedDatabaseFn: ->
+    if @hasLoadingStarted
+      if @hasLoadingFinished
+        @openedDatabaseFn() if @openedDatabaseFn()
+      else
+        'pass'
+    else
+      @openedDatabaseFn() if @openedDatabaseFn()
+
   updateOpenedDatabaseList: ->
-    if @user.apiKey
+    if @user and @user.apiKey
+      @hasLoadingStarted = true
+      @hasLoadingFinished = false
       @callGetOpenedDatabaseListApi {
         "apiKey": @user.apiKey
       }, (err, response)=>
@@ -358,6 +383,9 @@ Polymer {
           { openedDatabaseList } = response.data
           @openedDatabaseList = []
           @openedDatabaseList = openedDatabaseList
+        @hasLoadingStarted = true
+        @hasLoadingFinished = true
+        @_callOpenedDatabaseFn()
 
   $isTruthy: (value)-> return value
 

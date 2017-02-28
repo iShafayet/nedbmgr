@@ -7,17 +7,18 @@ app.behaviors.apiCalling =
     fn = if @notifyApiAction then @notifyApiAction.bind @ else @domHost.notifyApiAction.bind @domHost
     apiActionId = fn 'start', apiPath
     lib.network.callNedbmgrPostApi apiPath, data, (err, response)=>
-      if err
-        console.log err, response
-        alert "Error Happened."
-      if response.statusCode isnt 200
-        fn 'error', apiPath, apiActionId
-        if response.statusCode is 400 and response.error is 'ERR_DB_NOT_OPENED'
-          fn = if @updateOpenedDatabaseList then @updateOpenedDatabaseList.bind @ else @domHost.updateOpenedDatabaseList.bind @domHost
-          fn()
-      else
-        fn 'done', apiPath, apiActionId
-      cbfn err, response
+      lib.util.delay GENERIC_API_CALLING_DELAY, =>
+        if err
+          console.log err, response
+          alert "Error Happened."
+        if response.statusCode isnt 200
+          fn 'error', apiPath, apiActionId
+          if response.statusCode is 400 and response.error is 'ERR_DB_NOT_OPENED'
+            fn = if @updateOpenedDatabaseList then @updateOpenedDatabaseList.bind @ else @domHost.updateOpenedDatabaseList.bind @domHost
+            fn()
+        else
+          fn 'done', apiPath, apiActionId
+        cbfn err, response
 
   callLoginApi: (data, cbfn)->
     @callApi 'login', data, (err, response)=>

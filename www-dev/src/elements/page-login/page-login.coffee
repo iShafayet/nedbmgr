@@ -41,6 +41,7 @@ Polymer {
         user = response.data
         @loginDbAction user, @shouldRememberUser 
         @domHost.navigateToPage '#/'        
+        @domHost.updateOpenedDatabaseList()
 
 
 }
