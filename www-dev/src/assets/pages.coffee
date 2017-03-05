@@ -58,6 +58,19 @@ app.pages.pageList = [
     hideLoginButton: true
   }
   {
+    name: 'run-code'
+    element: 'page-run-code'
+    windowTitlePostfix: 'Run Code On Server'
+    headerTitle: 'Run Code On Server'
+    preload: true
+    hrefList: [ 'run-code' ]
+    requireAuthentication : true
+    headerType: 'normal'
+    leftMenuEnabled: true
+    showBackButton: true
+    hideLoginButton: true
+  }
+  {
     name: 'search'
     element: 'page-search'
     windowTitlePostfix: 'Search and Edit'

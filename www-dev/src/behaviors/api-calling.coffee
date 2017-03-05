@@ -67,3 +67,7 @@ app.behaviors.apiCalling =
   callDeleteQueryFromQueryStoreApi: (data, cbfn)->
     @callApi 'delete-query-from-query-store', data, (err, response)=>
       cbfn err, response
+
+  callRunCodeApi: (data, cbfn)->
+    @callApi 'run-code', data, (err, response)=>
+      cbfn err, response

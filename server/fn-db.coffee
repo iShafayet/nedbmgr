@@ -77,3 +77,7 @@ ensureDatabaseIsOpen = (failCbfn, successCbfn)->
       if err
         return cbfn err
       cbfn null, (numRemoved is 1)
+
+@getRawDatabaseHandle = (cbfn)->
+  ensureDatabaseIsOpen cbfn, =>
+    cbfn null, db

@@ -1,0 +1,253 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-run-code">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+    .limiting-container {
+      margin-top: 10px;
+    }
+    
+    .external-card-title {
+      margin-top: 20px;
+      margin-left: 20px;
+      margin-right: 10px;
+      color: #777777;
+    }
+    
+    .info-card {
+      @apply(--layout-vertical);
+      /*@apply(--layout-center);*/
+      margin-top: 10px;
+      margin-left: 10px;
+      margin-right: 10px;
+      padding-bottom: 10px;
+    }
+    
+    .info-card .row {
+      margin-left: 10px;
+      /*margin-right: 10px;*/
+      margin-top: 10px;
+    }
+    
+    .info-card .hr {
+      margin-left: 20px;
+      margin-right: 20px;
+      height: 1px;
+      /*width: 100px;*/
+      background: #dddddd;
+    }
+    
+    .serial-number {
+      background: #37474F;
+      color: #ffffff;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      padding-left: 8px;
+      padding-right: 8px;
+      /*border-radius: 4px;*/
+      text-transform: uppercase;
+      font-weight: bold;
+      display: inline-block;
+      font-size: 14px;
+    }
+    
+    .skip-input {
+      width: 80px;
+      margin-left: 4px;
+      margin-right: 4px;
+    }
+    
+    .limiting-container {
+      max-width: 920px
+    }
+    /* NEW */
+    
+    .query-input {
+      margin-left: 24px;
+      --iron-autogrow-textarea: {
+        font-family: monospace !important;
+      }
+      --paper-input-container-underline: {
+        /*border-bottom: none;*/
+        height: 0px;
+      }
+      --paper-input-container-underline-focus: {
+        height: 0px;
+      }
+    }
+    
+    
+    .query-input-error {
+      color: red;
+      margin-top: 10px;
+    }
+    
+    .prettify-button {
+      background: #E91E63;
+      color: white;
+    }
+    
+    .run-code-button {
+      background: #2196F3;
+      color: white;
+    }
+    
+    .doc-input {
+      --iron-autogrow-textarea: {
+        font-family: monospace !important;
+        font-size: 16px !important;
+        line-height: 20px !important;
+        background-color: #CFD8DC !important;
+        padding: 4px !important;
+        border-left: 8px solid #546E7A !important;
+      }
+    }
+    
+    .fn-area {
+      font-family: monospace;
+      font-size: 16px;
+    }
+    
+    .syntax-fn {
+      color: red;
+    }
+    
+    .syntax-braces {
+      /*color: cyan;*/
+      color: blue;
+      font-weight: bold;
+    }
+    
+    .syntax-comma {
+      color: magenta;
+    }
+    
+    .syntax-args {
+      color: blue;
+    }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- query - start -->
+        <div class="external-card-title">
+          <div>Query</div>
+        </div>
+
+        <paper-card class="info-card">
+          <div class="card-content">
+
+            <div class="vertical layout fn-area">
+              <div>
+                <span class="syntax-fn">function</span>
+                <span class="syntax-braces">(</span>
+                <span class="syntax-args">done</span>
+                <span class="syntax-comma">,</span>
+                <span class="syntax-args">collect</span>
+                <span class="syntax-comma">,</span>
+                <span class="syntax-args">log</span>
+                <span class="syntax-comma">,</span>
+                <span class="syntax-args">err</span>
+                <span class="syntax-comma">,</span>
+                <span class="syntax-args">query</span>
+                <span class="syntax-comma">,</span>
+                <span class="syntax-args">update</span>
+                <span class="syntax-comma">,</span>
+                <span class="syntax-args">insert</span>
+                <span class="syntax-comma">,</span>
+                <span class="syntax-args">remove</span>
+                <span class="syntax-braces">)</span>
+                <span class="syntax-braces">{</span>
+              </div>
+
+              <paper-textarea class="query-input" value="{{queryString}}" rows="6"></paper-textarea>
+
+              <div>
+                <span class="syntax-braces">}</span>
+              </div>
+            </div>
+
+            <template is="dom-if" if="[[queryInputErrorMessage]]">
+              <div class="query-input-error">[[queryInputErrorMessage]]</div>
+            </template>
+
+            <div class="horizontal layout center">
+              <div class="flex"></div>
+              <!-- <paper-button on-tap="prettifyButtonTapped" class="prettify-button" raised>Prettify</paper-button> -->
+              <paper-button on-tap="runCodeButtonTapped" class="run-code-button" raised>Run On Server</paper-button>
+            </div>
+
+          </div>
+        </paper-card>
+        <!-- query - end -->
+
+        <!-- results - start -->
+        <div class="external-card-title">
+          <div>[[resultMessage]]</div>
+        </div>
+
+        <template is="dom-repeat" items="[[docList]]" as="doc" index-as="docIndex">
+
+          <paper-card class="info-card">
+            <div class="card-content">
+
+              <div class="horizontal layout center">
+
+                <div class="serial-number">[[doc._id]]</div>
+
+              </div>
+
+              <paper-textarea readonly no-label-float class="doc-input" value="[[$makeDocText(doc)]]" max-rows="8"></paper-textarea>
+
+            </div>
+          </paper-card>
+
+        </template>
+        <!-- results - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.6.11/beautify.min.js"></script>
+  <script src="page-run-code.coffee-compiled.js"></script>
+</dom-module>

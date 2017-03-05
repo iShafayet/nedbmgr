@@ -35,6 +35,11 @@ Joi = require('joi')
   deleteQueryFromQueryStore
 } = require './fn-query-store'
 
+{ 
+  runCode
+} = require './fn-run-code'
+
+
 @createNedbmgrServer = (options, nedbDatabaseObject, externCbfn)->
 
   options = normalizeOptions options
@@ -284,6 +289,28 @@ Joi = require('joi')
               return reply handleError err
             else
               return reply makeStandardReply { wasDeleted: wasDeleted }
+
+  server.route
+    method: 'POST'
+    path: '/api/1/run-code'
+    config: 
+      validate: 
+        payload:
+          apiKey: Joi.string().required()
+          code: Joi.string().required()
+          '__meta': Joi.object()
+    handler: (request, reply) ->
+      { apiKey, code } = request.payload
+      getUserIdFromApiKey apiKey, (err, userId)=>
+        if err
+          return reply handleError err
+        else
+          runCode code, (err, errOutput, logOutput, docList)=>
+            if err
+              return reply handleError err
+            else
+              return reply makeStandardReply { errOutput, logOutput, docList }
+
 
   server.register {
     register: Good

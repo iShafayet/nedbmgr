@@ -1,6 +1,4 @@
+{"type":"json","body":"{\n  \"collection\": \"user-info\",\n  \"emailAddressList.emailAddress\": {\n    \"$regex\": {\n      \"$exp\": \"@bdemr\"\n    }\n  }\n}","nameAndTagString":"Show #BDEMR Users Here","collection":"stored-query","_id":"Jn7M7PS45svbxgdh"}
 {"type":"json","body":"{\n  \"collection\": \"user-info\"\n}","nameAndTagString":"TEST","_id":"NmVU8tPRWXkU2MmU"}
 {"type":"json","body":"{\n  \"collection\": \"user-info\"\n}","nameAndTagString":"Get All #User #BDEMR","collection":"stored-query","_id":"fsOEI5DsBvoUBDj3"}
-{"type":"json","body":"{\n  \"collection\": \"user-info\"\n}","nameAndTagString":"Dump All","collection":"stored-query","_id":"mUBZzjIw74jHqNxZ"}
-{"type":"json","body":"{\n  \"collection\": \"user-info\",\n  \"emailAddressList.emailAddress\": {\n    \"$regex\": {\n      \"$exp\": \"@bdemr\"\n    }\n  }\n}","nameAndTagString":"Show #BDEMR Users","collection":"stored-query","_id":"Jn7M7PS45svbxgdh"}
 {"type":"json","body":"{\n  \"collection\": \"user-info\"\n}","nameAndTagString":"Dump All #AAA","collection":"stored-query","_id":"mUBZzjIw74jHqNxZ"}
-{"type":"json","body":"{\n  \"collection\": \"user-info\",\n  \"emailAddressList.emailAddress\": {\n    \"$regex\": {\n      \"$exp\": \"@bdemr\"\n    }\n  }\n}","nameAndTagString":"Show #BDEMR Users Here","collection":"stored-query","_id":"Jn7M7PS45svbxgdh"}
