@@ -147,6 +147,31 @@
       background: #FF5722;
       color: white;
     }
+    
+    .stored-query-delete-button {
+      background: #FF5722;
+      color: white;
+    }
+    
+    .stored-query-save-button {
+      background: #2196F3;
+      color: white;
+    }
+    
+    .stored-query-hash-tag {
+      margin-right: 12px;
+    }
+    
+    .stored-query-hash-tag .main {
+      color: #2196F3;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .filtered-stored-query-item {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
     </style>
 
     <!-- local DOM -->
@@ -155,11 +180,48 @@
 
       <div class="limiting-container">
 
-        <!-- query - start -->
-        <div class="external-card-title">
+        <!-- query-load - start -->
+        <div class="external-card-title horizontal layout center">
           <div>Query</div>
+          <div class="flex"></div>
+          <template is="dom-if" if="[[isLoadExistingAreaExpanded]]">
+            <div>Hide</div>
+            <paper-icon-button on-tap="loadExistingCollapsePressed" icon="expand-less"></paper-icon-button>
+          </template>
+          <template is="dom-if" if="[[!isLoadExistingAreaExpanded]]">
+            <div>Load Existing</div>
+            <paper-icon-button on-tap="loadExistingExpandPressed" icon="expand-more"></paper-icon-button>
+          </template>
         </div>
 
+        <template is="dom-if" if="[[isLoadExistingAreaExpanded]]">
+          <paper-card class="info-card">
+            <div class="card-content">
+              <div class="horizontal layout center wrap">
+                <template is="dom-repeat" items="[[storedQueryTagList]]" as="tag">
+                  <div class="stored-query-hash-tag" on-tap="storedQueryTagTapped">
+                    <span class="main">
+                    <template is="dom-if" if="[[$in(tag, filterStoredQueryTagList, filterStoredQueryTagList.length)]]">
+                      <iron-icon icon="done"></iron-icon>
+                    </template>
+                    #[[tag]]</span> ([[$getStoredQueryTaggedCount(storedQueryTagMap, tag)]])
+                  </div>
+                </template>
+              </div>
+
+              <template is="dom-repeat" items="[[filteredStoredQueryList]]" as="storedQuery">
+                <div class="horizontal layout center filtered-stored-query-item">
+                  <div>[[storedQuery.nameAndTagString]]</div>
+                  <div class="flex"></div>
+                  <paper-icon-button on-tap="storedQueryLoadIconTapped" icon="open-in-browser"></paper-icon-button>
+                </div>
+              </template>
+            </div>
+          </paper-card>
+        </template>
+        <!-- query-load - end -->
+
+        <!-- query - start -->
         <paper-card class="info-card">
           <div class="card-content">
 
@@ -171,12 +233,13 @@
 
             <div class="horizontal layout center">
 
-              
-              <paper-icon-button on-tap="shortcutFirstPageTapped" icon="rowing"><!-- first-page --></paper-icon-button>
+              <paper-icon-button on-tap="shortcutFirstPageTapped" icon="rowing">
+                <!-- first-page -->
+              </paper-icon-button>
               <paper-icon-button on-tap="shortcutPrevPageTapped" icon="chevron-left"></paper-icon-button>
               <paper-input label="Skip" always-float-label class="skip-input" type="number" value="{{skip}}"></paper-input>
               <paper-input label="Limit" always-float-label class="skip-input" type="number" value="{{limit}}"></paper-input>
-              <paper-icon-button on-tap="shortcutNextPageTapped"  icon="chevron-right"></paper-icon-button>
+              <paper-icon-button on-tap="shortcutNextPageTapped" icon="chevron-right"></paper-icon-button>
               <div class="flex"></div>
               <paper-button on-tap="prettifyButtonTapped" class="prettify-button" raised>Prettify</paper-button>
               <paper-button on-tap="runQueryButtonTapped" class="run-query-button" raised>Run</paper-button>
@@ -185,6 +248,23 @@
           </div>
         </paper-card>
         <!-- query - end -->
+
+        <!-- query-save - start -->
+        <paper-card class="info-card">
+          <div class="card-content">
+
+            <div class="horizontal layout center">
+              <paper-input label="Name and Tag String" always-float-label class="stored-query-name-and-tag-input flex" type="text" value="{{storedQuery.nameAndTagString}}"></paper-input>
+              <paper-icon-button on-tap="storedQueryNamingHelpIconTapped" icon="help-outline"></paper-icon-button>
+              <paper-button on-tap="storedQuerySaveButtonTapped" class="stored-query-save-button" raised>Save</paper-button>
+              <template is="dom-if" if="[[storedQuery.idOnServer]]">
+                <paper-button on-tap="storedQueryDeleteButtonTapped" class="stored-query-delete-button" raised>Delete</paper-button>
+              </template>
+            </div>
+
+          </div>
+        </paper-card>
+        <!-- query-save - end -->
 
         <!-- results - start -->
         <div class="external-card-title">

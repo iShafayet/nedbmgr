@@ -52,3 +52,18 @@ app.behaviors.apiCalling =
     @callApi 'get-opened-db-list', data, (err, response)=>
       cbfn err, response
 
+  callGetOpenedDatabaseListApi: (data, cbfn)->
+    @callApi 'get-opened-db-list', data, (err, response)=>
+      cbfn err, response
+
+  callFetchStoredQueryListApi: (data, cbfn)->
+    @callApi 'fetch-stored-query-list', data, (err, response)=>
+      cbfn err, response
+
+  callSaveQueryInQueryStoreApi: (data, cbfn)->
+    @callApi 'save-query-in-query-store', data, (err, response)=>
+      cbfn err, response
+
+  callDeleteQueryFromQueryStoreApi: (data, cbfn)->
+    @callApi 'delete-query-from-query-store', data, (err, response)=>
+      cbfn err, response

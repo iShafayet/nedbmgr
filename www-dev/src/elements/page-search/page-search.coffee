@@ -17,7 +17,7 @@ Polymer {
       value: ->
         object = 
           collection: 'user-info'
-        JSON.stringify object, null, 0
+        JSON.stringify object, null, 2
       observer: 'queryStringAltered'
     queryInputErrorMessage:
       type: String
@@ -43,6 +43,146 @@ Polymer {
     selectedDocIndex:
       type: Number
       value: 0
+    isLoadExistingAreaExpanded:
+      type: Boolean
+      value: false
+    storedQuery:
+      type: Object
+      value: -> {
+        body: ''
+        nameAndTagString: ''
+        type: 'json'
+        idOnServer: null
+      }
+    storedQueryTagList:
+      type: Array
+      value: -> []
+    storedQueryTagMap:
+      type: Object
+      value: -> {}
+    storedQueryList:
+      type: Array
+      value: -> []
+    filterStoredQueryTagList: 
+      type: Array
+      value: -> []
+    filteredStoredQueryList: 
+      type: Array
+      value: -> []
+
+  $in: (item, list)-> item in list
+
+  ## ========= Save/Load ========= ##
+
+  storedQueryLoadIconTapped: (e)->
+    @isLoadExistingAreaExpanded = false
+    { storedQuery } = e.model
+    @set 'storedQuery', storedQuery
+    @set 'queryString', storedQuery.body
+
+  _filterStoredQueryList: ->
+    if @filterStoredQueryTagList.length is 0
+      @set 'filteredStoredQueryList', []
+      return
+    filteredStoredQueryList = []
+    for tag in @filterStoredQueryTagList
+      tag = '#' + tag
+      for storedQuery in @storedQueryList
+        if (storedQuery.nameAndTagString.indexOf tag) > -1 or tag is '#[ALL]'
+          filteredStoredQueryList.push storedQuery
+      filteredStoredQueryList = lib.array.unique filteredStoredQueryList
+    @set 'filteredStoredQueryList', filteredStoredQueryList
+
+  loadExistingExpandPressed: (e)->
+    @isLoadExistingAreaExpanded = true
+
+  loadExistingCollapsePressed: (e)->
+    @isLoadExistingAreaExpanded = false
+
+  _fetchStoredQueryList: (cbfn)->
+    @callFetchStoredQueryListApi {
+      "apiKey": @domHost.user.apiKey
+    }, (err, response)=>
+      if response.statusCode isnt 200
+        @domHost.showModalDialog response.message
+      else
+        cbfn response.data.queryList
+        return
+
+  _loadAndDisplayStoredQueryList: ->
+    @_fetchStoredQueryList (queryList)=>
+      tagMap = {}
+      for detailedQueryObject in queryList
+        detailedQueryObject.idOnServer = detailedQueryObject._id
+        delete detailedQueryObject._id
+        { nameAndTagString } = detailedQueryObject
+        wordArray = nameAndTagString.split ' '
+        for word in wordArray
+          if word.charAt(0) is '#'
+            word = word.substr 1
+            unless word of tagMap
+              tagMap[word] = []
+            tagMap[word].push detailedQueryObject
+      storedQueryTagList = (Object.keys tagMap)
+      storedQueryTagList.push '[ALL]'
+      @set 'storedQueryTagMap', tagMap
+      @set 'storedQueryTagList', storedQueryTagList
+      @set 'storedQueryList',  queryList
+      @set 'filterStoredQueryTagList', []
+      @_filterStoredQueryList()
+
+  $getStoredQueryTaggedCount: (storedQueryTagMap, tag)->
+    if tag is '[ALL]'
+      return @storedQueryList.length
+    return try storedQueryTagMap[tag].length catch ex then 0
+
+  storedQueryTagTapped: (e)->
+    { tag } = e.model
+    if tag in @filterStoredQueryTagList
+      index = @filterStoredQueryTagList.indexOf tag
+      @splice 'filterStoredQueryTagList', index, 1
+    else
+      @push 'filterStoredQueryTagList', tag
+    @_filterStoredQueryList()
+
+  storedQueryNamingHelpIconTapped: (e)->
+    message = 'Name your query. Please use a #Hashtag to make it filterable. Such as "Get User List #MyProject #User"'
+    @domHost.showModalDialog message
+
+  storedQuerySaveButtonTapped: (e)->
+    detailedQueryObject = {
+      idOnServer: @storedQuery.idOnServer
+      type: @storedQuery.type
+      body: @queryString
+      nameAndTagString: @storedQuery.nameAndTagString
+    }
+    
+    @callSaveQueryInQueryStoreApi {
+      "apiKey": @domHost.user.apiKey
+      detailedQueryObject
+    }, (err, response)=>
+      if response.statusCode isnt 200
+        @domHost.showModalDialog response.message
+      else
+        storedQuery = response.data.detailedQueryObject
+        storedQuery.idOnServer = storedQuery._id
+        delete storedQuery['_id']
+        @set 'storedQuery', storedQuery
+      @_loadAndDisplayStoredQueryList()
+
+  storedQueryDeleteButtonTapped: (e)->
+    @callDeleteQueryFromQueryStoreApi {
+      "apiKey": @domHost.user.apiKey
+      "id": @storedQuery.idOnServer
+    }, (err, response)=>
+      if response.statusCode isnt 200
+        @domHost.showModalDialog response.message
+      else
+        @domHost.showToast "Stored query was deleted."
+        @set 'storedQuery.idOnServer', null
+      @_loadAndDisplayStoredQueryList()
+
+  ## ========= - ========= ##
 
   parseJsonForQuery: (json)->
     return JSON.parse json
@@ -193,6 +333,7 @@ Polymer {
 
   navigatedIn: ->
     @_checkOpenedDatabasesAndSelectDefault()
+    @_loadAndDisplayStoredQueryList()
 
   shortcutFirstPageTapped: (e)->
     @skip = 0
@@ -205,5 +346,7 @@ Polymer {
   shortcutNextPageTapped: (e)->
     @skip = ((parseInt @skip) + (parseInt @limit))
     @runQueryButtonTapped()
+
+
 
 }
