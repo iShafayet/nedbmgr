@@ -259,7 +259,15 @@
               <paper-input label="Limit" always-float-label class="skip-input" type="number" value="{{limit}}"></paper-input>
               <paper-icon-button on-tap="shortcutNextPageTapped" icon="chevron-right"></paper-icon-button>
               <div class="flex"></div>
-              <paper-button on-tap="prettifyButtonTapped" class="prettify-button" raised>Prettify</paper-button>
+              
+              <template is="dom-if" if="[[$equals(queryStringTypeSelectedIndex, 1)]]">
+                <paper-button on-tap="prettifyButtonTapped" class="prettify-button" raised>Prettify</paper-button>
+              </template>
+
+              <template is="dom-if" if="[[$equals(queryStringTypeSelectedIndex, 0)]]">
+                <paper-button on-tap="convertToJsonButtonTapped" class="prettify-button" raised>Convert To JSON</paper-button>
+              </template>
+              
               <paper-button on-tap="runQueryButtonTapped" class="run-query-button" raised>Run</paper-button>
             </div>
 

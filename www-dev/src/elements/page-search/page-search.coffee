@@ -233,6 +233,15 @@ Polymer {
     if @queryString.length isnt 0
       @_validateQueryString()
 
+  convertToJsonButtonTapped: (e)->
+    if @queryStringTypeSelectedIndex is 0
+      if object = @_validateQueryString()
+        string = JSON.stringify object, null, 2
+        @queryStringTypeSelectedIndex = 1
+        @queryString = string
+      else
+        @domHost.showToast "Please enter valid CSON first."
+
   prettifyButtonTapped: (e)->
     if @queryStringTypeSelectedIndex is 1
       if object = @_validateQueryString()
