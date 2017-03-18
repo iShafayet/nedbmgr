@@ -5,7 +5,10 @@
 <link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
 
 <!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+
 <link rel="import" href="../../bower-assets/paper-card/paper-card.html">
 <link rel="import" href="../../bower-assets/paper-input/paper-input.html">
 <link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
@@ -167,10 +170,21 @@
       text-decoration: underline;
       cursor: pointer;
     }
-
+    
     .filtered-stored-query-item {
       margin-top: 4px;
       margin-bottom: 4px;
+    }
+    
+    paper-tabs paper-tab.iron-selected {
+      color: #ffff8d;
+    }
+    
+    paper-tabs {
+      --paper-tabs: {
+        color: white;
+        background: #2196F3;
+      }
     }
     </style>
 
@@ -225,6 +239,10 @@
         <paper-card class="info-card">
           <div class="card-content">
 
+            <paper-tabs selected="{{queryStringTypeSelectedIndex}}">
+              <paper-tab>CSON</paper-tab>
+              <paper-tab>JSON</paper-tab>
+            </paper-tabs>
             <paper-textarea class="query-input" value="{{queryString}}" rows="6"></paper-textarea>
 
             <template is="dom-if" if="[[queryInputErrorMessage]]">

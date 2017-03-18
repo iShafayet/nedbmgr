@@ -18,7 +18,7 @@ Polymer {
         object = 
           collection: 'user-info'
         JSON.stringify object, null, 2
-      observer: 'queryStringAltered'
+      # observer: 'queryStringAltered'
     queryInputErrorMessage:
       type: String
       value: ''
@@ -51,7 +51,7 @@ Polymer {
       value: -> {
         body: ''
         nameAndTagString: ''
-        type: 'json'
+        type: 'cson'
         idOnServer: null
       }
     storedQueryTagList:
@@ -69,6 +69,22 @@ Polymer {
     filteredStoredQueryList: 
       type: Array
       value: -> []
+    queryStringTypeSelectedIndex:
+      type: Number
+      value: ->
+        index = lib.localStorage.getItem '--nedbmgr-query-type-index'
+        return (if index isnt null then (parseInt index) else 0)
+      observer: 'queryStringTypeSelectedIndexChanged'
+
+  observers: [
+    'queryStringAltered(queryString, queryStringTypeSelectedIndex)'
+  ]
+
+  queryStringTypeSelectedIndexChanged: ->
+    index = lib.localStorage.getItem '--nedbmgr-query-type-index'
+    if index isnt (''+@queryStringTypeSelectedIndex)
+      lib.localStorage.setItem '--nedbmgr-query-type-index', @queryStringTypeSelectedIndex
+    @storedQuery.type = ['cson', 'json'][@queryStringTypeSelectedIndex]
 
   $in: (item, list)-> item in list
 
@@ -79,6 +95,10 @@ Polymer {
     { storedQuery } = e.model
     @set 'storedQuery', storedQuery
     @set 'queryString', storedQuery.body
+    if storedQuery.type is 'cson'
+      @queryStringTypeSelectedIndex = 0
+    else
+      @queryStringTypeSelectedIndex = 1
 
   _filterStoredQueryList: ->
     if @filterStoredQueryTagList.length is 0
@@ -184,22 +204,25 @@ Polymer {
 
   ## ========= - ========= ##
 
-  parseJsonForQuery: (json)->
-    return JSON.parse json
-      
+  parseQueryStringForQuery: (queryString)->
+    if @queryStringTypeSelectedIndex is 0
+      return CoffeeScript.eval queryString
+    else
+      return JSON.parse queryString
+
   arrowBackButtonPressed: (e)->
     @domHost.navigateToPreviousPage()
 
   _validateJson: (json)->
     try
-      object = @parseJsonForQuery json
+      object = @parseQueryStringForQuery json
     catch ex
       return [ ex.message, null ]
     return [ null, object ]
 
   _validateQueryString: ->
     try
-      object = @parseJsonForQuery @queryString
+      object = @parseQueryStringForQuery @queryString
     catch ex
       @queryInputErrorMessage = ex.message
       return null
@@ -211,15 +234,18 @@ Polymer {
       @_validateQueryString()
 
   prettifyButtonTapped: (e)->
-    if object = @_validateQueryString()
-      string = JSON.stringify object, null, 2
-      @queryString = string
+    if @queryStringTypeSelectedIndex is 1
+      if object = @_validateQueryString()
+        string = JSON.stringify object, null, 2
+        @queryString = string
+    else
+      @domHost.showToast "Unable to prettify CSON"
 
   _runQuery: (object, cbfn)->
     token = (new Date).getTime()
     @callQueryApi {
       "apiKey": @domHost.user.apiKey,
-      "query": @queryString
+      "query": JSON.stringify object
       "skip": @skip
       "limit": @limit
     }, (err, response)=>
@@ -299,7 +325,7 @@ Polymer {
     @domHost.showModalPrompt "Are you sure?", (answer)=>
       return unless answer
       
-      newDoc = @parseJsonForQuery (@get "docList.#{docIndex}.__nedbmgr__.value")
+      newDoc = @parseQueryStringForQuery (@get "docList.#{docIndex}.__nedbmgr__.value")
       newDoc._id = doc._id
 
       @callUpdateDocApi {
@@ -317,7 +343,7 @@ Polymer {
 
   $makeDocText: (doc)->
     text = JSON.stringify doc
-    object = @parseJsonForQuery text
+    object = @parseQueryStringForQuery text
     delete object['_id'] if '_id' of object
     delete object['__nedbmgr__'] if '__nedbmgr__' of object
     text = JSON.stringify object, null, 2
