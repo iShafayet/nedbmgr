@@ -38,7 +38,7 @@ app.behaviors.dbUsing =
 
     lib.tabStorage.setItem 'is-tab-authenticated', (lib.json.stringify true)
 
-  getCurrentUser: -> (app.db.find 'user')[0]
+  getCurrentUser: -> ((app.db.find 'user')[0]) or null
 
 
 

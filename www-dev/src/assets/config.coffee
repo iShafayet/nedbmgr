@@ -13,6 +13,8 @@ window.app =
 
     masterApiVersion: '1'
 
+    apiCallingMinimumDelay: 500
+
     variableConfigs:
 
       'development':

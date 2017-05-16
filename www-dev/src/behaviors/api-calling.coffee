@@ -1,13 +1,11 @@
 
-GENERIC_API_CALLING_DELAY = 500
-
 app.behaviors.apiCalling = 
 
   callApi: (apiPath, data, cbfn)->
     fn = if @notifyApiAction then @notifyApiAction.bind @ else @domHost.notifyApiAction.bind @domHost
     apiActionId = fn 'start', apiPath
     lib.network.callNedbmgrPostApi apiPath, data, (err, response)=>
-      lib.util.delay GENERIC_API_CALLING_DELAY, =>
+      lib.util.delay app.config.apiCallingMinimumDelay, =>
         if err
           console.log err, response
           alert "Error Happened."
