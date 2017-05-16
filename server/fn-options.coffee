@@ -18,6 +18,17 @@
   unless 'host' of apiServer
     apiServer.host = null
 
+  unless 'rootDir' of options
+    options.rootDir = null
+  unless options.rootDir
+    options.rootDir = process.cwd()
+
+  unless user of options
+    options.user = {}
+  { user } = options
+  unless 'recoveryContact' of user
+    user.recoveryContact = 'help@myorg.com'
+
   unless db of options
     options.db = {}
   { db } = options

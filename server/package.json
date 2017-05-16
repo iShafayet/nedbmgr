@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/iShafayet/nedbmgr#readme",
   "dependencies": {
+    "baselib": "^0.1.0",
     "coffee-script": "^1.12.3",
     "good": "^7.1.0",
     "good-console": "^6.2.0",

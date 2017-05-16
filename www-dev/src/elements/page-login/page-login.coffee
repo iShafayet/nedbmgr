@@ -31,7 +31,8 @@ Polymer {
     @domHost.navigateToPage '#/'
 
   forgotPasswordPressed: (e)->
-    @domHost.showModalDialog 'Please call +88017XXXXXXX to request an account recovery.'
+    contact = @domHost.serverOptions.user.recoveryContact
+    @domHost.showModalDialog "Please contact #{contact} to request an account recovery."
 
   loginButtonPressed: (e)->
     @callLoginApi @loginFormData, (err, response)=>

@@ -27,10 +27,12 @@ defaultOptions = {
     requests: true
     queries: true
     sessions: true
-  defaultAdmin:
-    name: "James Bond"
-    email: "james@bond.com"
-    password: "Password1"
+  user:
+    defaultAdmin:
+      name: "James Bond"
+      email: "james@bond.com"
+      password: "Password1"
+    recoveryContact: 'help@myorg.com'
   fileServer:
     enabled: true
     customDir: null

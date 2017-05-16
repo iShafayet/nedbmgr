@@ -1,4 +1,6 @@
 
+baselib = require 'baselib'
+
 Hapi = require('hapi')
 Good = require('good')
 Joi = require('joi')
@@ -68,7 +70,9 @@ Joi = require('joi')
         payload:
           '__meta': Joi.object()
     handler: (request, reply) ->
-      return reply makeStandardReply { options }
+      clientOptions = baselib.deepCopy options
+      delete clientOptions['apiServer']
+      return reply makeStandardReply { options: clientOptions }
 
   server.route
     method: 'POST'
