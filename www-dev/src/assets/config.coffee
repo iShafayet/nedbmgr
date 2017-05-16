@@ -19,7 +19,7 @@ window.app =
 
       'development':
 
-        serverHost: 'http://localhost:8501'
+        serverHost: 'http://localhost:8503'
 
       'production':
 

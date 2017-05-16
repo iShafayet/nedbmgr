@@ -31,6 +31,8 @@
 <link rel="import" href="../../behaviors/db-using.html">
 <link rel="import" href="../../behaviors/debug.html">
 
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+
 <!-- custom -->
 <script src="behavior-data-transformation.coffee-compiled.js"></script>
 <script src="behavior-data-loader.coffee-compiled.js"></script>
@@ -45,7 +47,7 @@
 
     <!-- style -->
 
-    <style is="custom-style">
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
     /* host start */
     
     :host {
@@ -144,6 +146,12 @@
     .network-error-card{
       margin: 12px;
     }
+
+    .blue-button {
+      background: #2196F3;
+      color: white;
+    }
+
     </style>
 
     <!-- local DOM -->
@@ -269,7 +277,7 @@
 
             <div class="card-content vertical layout">
 
-              <div class="horizontal layout center">
+
                 An unexpected network error happened while trying to connect to the server. Make sure the following requirements are met and try again. Alternatively you can enter a different server address.
                 <ol>
                   <li>Your computer has an active internet connection.</li>
@@ -277,7 +285,12 @@
                   <li>There are no firewall issues.</li>
                   <li>nedbmgr server is running on the server machine.</li>
                 </ol>
-              </div>
+
+                <div class="layout horizontal center">
+                <paper-input label="Path to the server. i.e. http://mysite.com:8501" class="flex server-host-input" value="{{connection.enteredServerHost}}" type="text"></paper-input>
+                <paper-button class="blue-button" raised on-tap="retryConnectionTapped">Apply and Retry</paper-button>
+                </div>
+
             </div>
           </paper-card>
         </template>

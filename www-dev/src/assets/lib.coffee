@@ -1,4 +1,27 @@
 
+class Mutex
+
+  constructor: (toSatisfyArgList...)->
+    @satisfactionMap = {}
+    for name in toSatisfyArgList
+      @satisfactionMap[name] = false
+
+  finally: (@context, @fn)-> @
+
+  satisfy: (name)->
+    @satisfactionMap[name] = true
+    for name of @satisfactionMap
+      return if @satisfactionMap[name] is false
+    @fn.call @context
+
+  deprive: (name)->
+    @satisfactionMap[name] = false
+
+  reset: (name)->
+    for name of @satisfactionMap
+      @satisfactionMap[name] = false
+
+
 ### =======================================
 # lib.
     datetime.
@@ -30,6 +53,7 @@
       deepCopy
       shallowMerge - TODO
       callOnlyOnce - FIXME
+      Mutex
     string.
       replaceAll
       replaceLast
@@ -158,6 +182,8 @@ lib.datetime.makeRelativeTimeString = (diff)->
   @delay = delay
   @Notifier = Notifier
   @setImmediate = setImmediate
+
+  @Mutex = Mutex
 
   @shallowCopy = (obj)->
     return obj  if obj is null or typeof (obj) isnt "object"

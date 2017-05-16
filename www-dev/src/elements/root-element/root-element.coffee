@@ -1,6 +1,4 @@
 
-__isPreloadCalled = false
-
 Polymer {
 
   is: 'root-element'
@@ -40,23 +38,11 @@ Polymer {
           enteredServerHost: ''
         }
 
-  mutexes: 
-
-    readyToNavigate: 
-      descriptor: null
-      fn: ->
-        c = new lib.util.Collector 2
-        c.finally =>
-          c.count = 0
-          c.collection = {}
-          @readyToNavigate()
+  mutexes: {}
 
   _initMutexes: ->
-    mutex.descriptor = mutex.fn.call @ for _, mutex of @mutexes
-
-  _satisfyMutex: (name)->
-    console.log name
-    @mutexes[name].descriptor.collect 'a', null
+    @mutexes.readyToNavigate = new lib.util.Mutex 'RoutingDone', 'ConnectionEstablished'
+    .finally @, @readyToNavigate
 
   created: ->
     @removeUserUnlessSessionIsPersistent()
@@ -70,7 +56,7 @@ Polymer {
     @_createConnectionToServerAndFetchOptions()
 
   readyToNavigate: ->
-    console.log 'YAY', @page
+    @mutexes.readyToNavigate.deprive 'RoutingDone'
     @viewName = @page.name
 
   _loadUser: ->
@@ -78,8 +64,17 @@ Polymer {
 
   # === Create initial connection and fetch options from server ===
 
+  retryConnectionTapped: (e)->
+    @set 'connection.needsInput', false
+    meta = @getMeta()
+    meta = { serial: 'only' } unless meta
+    meta.serverHost = @connection.enteredServerHost
+    @setMeta meta
+    @_createConnectionToServerAndFetchOptions()    
+
   _createConnectionToServerAndFetchOptions: ->
     if (meta = @getMeta())
+
       { serverHost } = meta
       app.config.serverHost = serverHost
 
@@ -97,12 +92,11 @@ Polymer {
         @set 'connection.isLive', true
         @set 'connection.needsInput', false
         @set 'connection.enteredServerHost', app.config.serverHost
-        meta = {} unless meta
+        meta = { serial: 'only' } unless meta
         meta.serverHost = app.config.serverHost
         @setMeta meta
         { options } = response.data
-        @_satisfyMutex 'readyToNavigate'
-
+        @mutexes.readyToNavigate.satisfy 'ConnectionEstablished'
 
   # === Events manually delegated to current page ===
 
@@ -152,8 +146,7 @@ Polymer {
     pagePath = @resolveUrl ('../' + page.element + '/' + page.element + '.html')
     @importHref pagePath, doAfterImport, doAfterImport, false
 
-    @_satisfyMutex 'readyToNavigate'
-    
+    @mutexes.readyToNavigate.satisfy 'RoutingDone'
 
   # === Misc ===
 
@@ -162,6 +155,5 @@ Polymer {
 
   _applyUiTweaks: ->
     @$$('app-drawer-layout').responsiveWidth = '14400px'
-
 
 }
