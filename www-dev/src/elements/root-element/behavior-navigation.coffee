@@ -10,19 +10,10 @@ app.behaviors.local['root-element'].navigation = [
         type: String
         value: ''
 
-    _preloadOtherPages: ->
-      # @debug '_preloadOtherPages'
-      fullPageList = [].concat app.pages.pageList, [ app.pages.error404 ]
 
-      for page in fullPageList
-        do (page)=>
-          unless page.name is @page.name
-            pagePath = @resolveUrl ('../' + page.element + '/' + page.element + '.html')
-            id = @notifyDownloadAction 'start', pagePath
-            successCbfn = lib.network.ensureBaseNetworkDelay => @notifyDownloadAction 'done', pagePath, id
-            failureCbfn = lib.network.ensureBaseNetworkDelay => @notifyDownloadAction 'error', pagePath, id
-            @importHref pagePath, successCbfn, failureCbfn, true
-
+    observers: [ 
+      '_routerHrefChanged(routeData.page)'
+    ]
 
     _routerHrefChanged: (href) ->
       # @debug '_routerHrefChanged', href
@@ -36,42 +27,16 @@ app.behaviors.local['root-element'].navigation = [
           wasPageFound = true
           break
 
-      if @isUserLoggedIn()
-        @user = @getCurrentUser()
-      else
-        @user = null
-      
-      @openedDatabaseFn = =>
-        if wasPageFound
-          if possiblePage.requireAuthentication
-            if @isUserLoggedIn()
-              @page = possiblePage
-            else
-              @navigateToPage '#/login'
-          else
+      if wasPageFound
+        if possiblePage.requireAuthentication
+          if @isUserLoggedIn()
             @page = possiblePage
+          else
+            @navigateToPage '#/login'
         else
-          @page = app.pages.error404
-
-      if @user and @user.apiKey
-        @_callOpenedDatabaseFn()
+          @page = possiblePage
       else
-        @openedDatabaseFn()
-
-    _fillIronPagesFromPageList: ->
-      ironPages = Polymer.dom(@root).querySelector 'iron-pages'
-
-      fullPageList = [].concat app.pages.pageList, app.pages.error404
-
-      for page in fullPageList
-        pageElement = document.createElement page.element
-        pageElement.setAttribute 'name', page.name
-
-        Polymer.dom(ironPages).appendChild pageElement
-
-
-
-    # === NOTE - navigation code ===
+        @page = app.pages.error404
 
     getPageParams: ->
       hash = window.location.hash

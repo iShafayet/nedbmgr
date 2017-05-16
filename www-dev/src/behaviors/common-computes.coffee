@@ -17,3 +17,4 @@ app.behaviors.commonComputes =
 
   $mkDate: (date)-> lib.datetime.mkDate date
 
+  $isTruthy: (value)-> return value
