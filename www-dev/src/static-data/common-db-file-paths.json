@@ -1,0 +1,8 @@
+[
+  {
+    "path": "./database.db"
+  },
+  {
+    "path": "./main.db"
+  }
+]

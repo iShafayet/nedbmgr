@@ -3,7 +3,7 @@ app.behaviors.local['root-element'] = {} unless app.behaviors.local['root-elemen
 
 app.behaviors.local['root-element'].dataTransformation = 
 
-  _applyTransformations: (collectedData)->
+  _applyDataTransformations: (collectedData)->
     # console.log collectedData
     
 

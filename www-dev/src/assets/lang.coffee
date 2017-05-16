@@ -21,15 +21,6 @@ app.lang.saveDefaultLanguage = ->
 
 app.lang.phrases = 
   'bn-bd':
-    'new patients':'নতুন রুগী'
-    'new records':'নতুন রেকর্ড'
-    'view':'বিস্তারিত দেখুন'
-    'total patients':'মোট রুগী'
-    'total records':'মোট রেকর্ড'
-    'unpaid invoices':'অপরিশোধিত ইনভয়েস'
-    'days left':'দিন বাকি'
-    'renew':'নবায়ন করুন'
-    'purchase':'ক্রয় করুন'
     'General': 'সাধারণ'
     'Language': 'ভাষা'
 

@@ -225,7 +225,7 @@ Polymer {
 
   created: ->
     @removeUserUnlessSessionIsPersistent()
-    @loadStaticData()
+    @_loadStaticData()
 
   ready: ->
     @_fillIronPagesFromPageList()

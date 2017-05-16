@@ -2,18 +2,20 @@
 { createNedbmgrServer } = require './server'
 
 defaultOptions = {
+  rootDir: null # null to use current working directory
   apiServer:
     port: 8501
     host: 'localhost'
     pssk: null # is an arbitary string, preshared key that the client must provide with each query. null to ignore.
   db:
     readonly: false
-    allowBulkQueries: true
-    allowNonAdminTo:
+    allowBulkUpdates: true
+    allowBulkDeletes: true
+    allowNonAdminUserTo:
       useStoredFunctions: true
-      modifyStoredFunctions: false
+      addOrModifyStoredFunctions: false
     allowCustomDatabaseFilePath: true
-    allowCustomDatabaseFilePathExceedRoot: false
+    allowCustomDatabaseFilePathExceedingRoot: false
     predefinedDatabaseFileList: [
       {
         name: 'My Db 1'
@@ -47,14 +49,8 @@ defaultOptions = {
       caBundle: null
 }
 
-optionsThatAreCurrentlySupported = {
-  apiServer:
-    port: 8501
-    host: 'localhost'
-}
-
 @createStandaloneServer = (opt, cbfn)->
   createNedbmgrServer opt, null, cbfn
 
-@createParasiteServer = (opt, nedbDatabaseObject, cbfn)->
+@createEmbeddedServer = (opt, nedbDatabaseObject, cbfn)->
   createNedbmgrServer opt, nedbDatabaseObject, cbfn

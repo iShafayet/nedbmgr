@@ -7,8 +7,8 @@ app.behaviors.local['root-element'] = {} unless app.behaviors.local['root-elemen
 app.behaviors.local['root-element'].dataLoader = [
   {
 
-    loadStaticData: ->
-      @requestForLoadingStaticData()
+    _loadStaticData: ->
+      @_requestForLoadingStaticData()
 
     getStaticData: (name, cbfn)->
       unless name of staticData
@@ -22,19 +22,19 @@ app.behaviors.local['root-element'].dataLoader = [
           name: name
         }
 
-    afterLoadingStaticData: (collectedData)->
-      @_applyTransformations collectedData
+    _afterLoadingStaticData: (collectedData)->
+      @_applyDataTransformations collectedData
       staticData = collectedData
 
       for item in cbfnQueue
         lib.util.setImmediate item.cbfn, staticData[item.name]
     
-    requestForLoadingStaticData: ->
+    _requestForLoadingStaticData: ->
 
       staticDataList = [
         {
-          name: 'districtList'
-          url: './../static-data/district-list.json'
+          name: 'commonDbFilePaths'
+          url: './../static-data/common-db-file-paths.json'
         }
       ]
 
@@ -64,7 +64,7 @@ app.behaviors.local['root-element'].dataLoader = [
       it.finally -> null
 
       collection1.finally (collectedData)=> 
-        @afterLoadingStaticData collectedData
+        @_afterLoadingStaticData collectedData
 
   }, app.behaviors.local['root-element'].dataTransformation
 
