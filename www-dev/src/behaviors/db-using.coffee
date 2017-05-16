@@ -40,5 +40,8 @@ app.behaviors.dbUsing =
 
   getCurrentUser: -> ((app.db.find 'user')[0]) or null
 
+  getMeta: -> ((app.db.find '--meta', ({ serial }) -> serial is 'only')[0]) or null
 
+  setMeta: (meta)-> 
+    app.db.upsert '--meta', meta, (({ serial }) -> serial is 'only')
 

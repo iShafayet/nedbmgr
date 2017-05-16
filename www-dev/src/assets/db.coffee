@@ -24,3 +24,8 @@ app.db.defineCollection {
 app.db.defineCollection {
   name: '--persistent-session'
 }
+
+app.db.defineCollection {
+  name: '--meta'
+}
+

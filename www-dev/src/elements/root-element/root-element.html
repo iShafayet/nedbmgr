@@ -140,14 +140,16 @@
       text-decoration: underline;
       cursor: pointer;
     }
+
+    .network-error-card{
+      margin: 12px;
+    }
     </style>
 
     <!-- local DOM -->
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{routeLevel2}}"></app-route>
-    <app-route route="{{routeLevel2}}" pattern="/:pageLevel2" data="{{routeLevel2Data}}" tail="{{routeLevel3}}"></app-route>
-    <app-route route="{{routeLevel3}}" pattern="/:pageLevel3" data="{{routeLevel3Data}}" tail="{{routeLevel4}}"></app-route>
 
     <app-drawer-layout fullbleed>
       <app-drawer>
@@ -260,6 +262,25 @@
           </app-toolbar>
         </app-header>
         <!-- App header - End -->
+
+        <template is="dom-if" if="[[connection.needsInput]]">
+
+          <paper-card class="network-error-card">
+
+            <div class="card-content vertical layout">
+
+              <div class="horizontal layout center">
+                An unexpected network error happened while trying to connect to the server. Make sure the following requirements are met and try again. Alternatively you can enter a different server address.
+                <ol>
+                  <li>Your computer has an active internet connection.</li>
+                  <li>The server machine has an active internet connection.</li>
+                  <li>There are no firewall issues.</li>
+                  <li>nedbmgr server is running on the server machine.</li>
+                </ol>
+              </div>
+            </div>
+          </paper-card>
+        </template>
 
         <!-- Page switcher - Start -->
         <iron-pages role="main" selected="[[viewName]]" attr-for-selected="name" fallback-selection="error404" on-iron-select="ironPagesSelectedEvent" on-iron-deselect="ironPagesDeselectedEvent">

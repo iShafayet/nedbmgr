@@ -13,9 +13,9 @@ Polymer {
     app.behaviors.local['root-element'].dataTransformation
     app.behaviors.local['root-element'].dataLoader
     app.behaviors.local['root-element'].navigation
-    app.behaviors.local['root-element'].apiAndDownloadActions
     app.behaviors.local['root-element'].commonDialogs
     app.behaviors.local['root-element'].pageReadyMechanism
+    app.behaviors.local['root-element'].apiAndDownloadActions
   ]
 
   properties:
@@ -32,17 +32,77 @@ Polymer {
       type: Object
       value: null
 
+    connection:
+      type: Object
+      value: -> {
+          isLive: false
+          needsInput: false
+          enteredServerHost: ''
+        }
+
+  mutexes: 
+
+    readyToNavigate: 
+      descriptor: null
+      fn: ->
+        c = new lib.util.Collector 2
+        c.finally =>
+          c.count = 0
+          c.collection = {}
+          @readyToNavigate()
+
+  _initMutexes: ->
+    mutex.descriptor = mutex.fn.call @ for _, mutex of @mutexes
+
+  _satisfyMutex: (name)->
+    console.log name
+    @mutexes[name].descriptor.collect 'a', null
+
   created: ->
     @removeUserUnlessSessionIsPersistent()
     @_loadStaticData()
+    @_initMutexes()
 
   ready: ->
     @_fillIronPagesFromPageList()
     @_applyUiTweaks()
     @_loadUser()
+    @_createConnectionToServerAndFetchOptions()
+
+  readyToNavigate: ->
+    console.log 'YAY', @page
+    @viewName = @page.name
 
   _loadUser: ->
     @user = @getCurrentUser()
+
+  # === Create initial connection and fetch options from server ===
+
+  _createConnectionToServerAndFetchOptions: ->
+    if (meta = @getMeta())
+      { serverHost } = meta
+      app.config.serverHost = serverHost
+
+    @callConnectApi {}, (err, response)=>
+      if err
+        @set 'connection.isLive', false
+        @set 'connection.needsInput', true
+        @set 'connection.enteredServerHost', app.config.serverHost
+      else if response.statusCode isnt 200
+        @set 'connection.isLive', false
+        @set 'connection.needsInput', true
+        @set 'connection.enteredServerHost', app.config.serverHost
+        @showModalDialog response.message
+      else
+        @set 'connection.isLive', true
+        @set 'connection.needsInput', false
+        @set 'connection.enteredServerHost', app.config.serverHost
+        meta = {} unless meta
+        meta.serverHost = app.config.serverHost
+        @setMeta meta
+        { options } = response.data
+        @_satisfyMutex 'readyToNavigate'
+
 
   # === Events manually delegated to current page ===
 
@@ -92,7 +152,8 @@ Polymer {
     pagePath = @resolveUrl ('../' + page.element + '/' + page.element + '.html')
     @importHref pagePath, doAfterImport, doAfterImport, false
 
-    @viewName = page.name
+    @_satisfyMutex 'readyToNavigate'
+    
 
   # === Misc ===
 

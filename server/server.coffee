@@ -62,6 +62,16 @@ Joi = require('joi')
 
   server.route
     method: 'POST'
+    path: '/api/1/connect'
+    config: 
+      validate: 
+        payload:
+          '__meta': Joi.object()
+    handler: (request, reply) ->
+      return reply makeStandardReply { options }
+
+  server.route
+    method: 'POST'
     path: '/api/1/login'
     config: 
       validate: 
