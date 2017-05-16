@@ -36,10 +36,21 @@ Polymer {
 
     connection:
       type: Object
-      value: -> {
+      value: ->
+        {
           isLive: false
           needsInput: false
           enteredServerHost: ''
+        }
+
+    serverDatabase:
+      type: Object
+      value: ->
+        {
+          isOpen: null
+          path: null
+          name: null
+          uid: null
         }
 
   mutexes: {}
@@ -65,6 +76,28 @@ Polymer {
 
   _loadUser: ->
     @user = @getCurrentUser()
+
+  # === database selection, opening and closing ===
+
+  openDatabase: (path, cbfn)->
+    @set 'database.uid', null
+    @set 'database.path', null
+    @set 'database.name', null
+    @set 'database.isOpen', false
+    @callOpenDbApi {
+      "apiKey": @user.apiKey,
+      "path": path
+    }, (err, response)=>
+      if response.statusCode isnt 200
+        @showModalDialog response.message
+      else
+        if response.data.opened
+          @showModalDialog "Database Opened"
+          @set 'database.uid', response.data.uid
+          @set 'database.path', path
+          @set 'database.name', response.data.name
+          @set 'database.isOpen', true
+
 
   # === Create initial connection and fetch options from server ===
 

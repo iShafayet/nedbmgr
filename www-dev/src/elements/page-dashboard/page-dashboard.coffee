@@ -19,7 +19,7 @@ Polymer {
       value: 0
     enteredDatabasePath:
       type: String
-      value: './mydatabase.db'
+      value: './test/manual/mydatabase.db'
 
   logInTapped: ->
     @domHost.navigateToPage '#/login'
@@ -28,20 +28,15 @@ Polymer {
     @refreshKey = @refreshKey + 1
     @serverOptions = @domHost.serverOptions
 
+  openPredefinedDbTapped: (e)->
+    { path } = e.model.entry
+    @domHost.openDatabase path, (err)=>
+      unless err
+        console.log 'open'
+
   openDbTapped: (e)->
-    alert 'AA'
-    return
-    @callOpenDbApi {
-      "apiKey": @domHost.user.apiKey,
-      "path": @dbPath
-    }, (err, response)=>
-      if response.statusCode isnt 200
-        @domHost.showModalDialog response.message
-      else
-        if response.data.opened
-          @domHost.showModalDialog "Database Opened"
-          @domHost.updateOpenedDatabaseList()
-
-
+    @domHost.openDatabase @enteredDatabasePath, (err)=>
+      unless err
+        console.log 'open'
 
 }

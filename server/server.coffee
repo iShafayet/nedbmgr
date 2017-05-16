@@ -106,11 +106,11 @@ Joi = require('joi')
         if err
           return reply handleError err
         else
-          openDatabaseFile path, (err)=>
+          openDatabaseFile path, (err, uid, name)=>
             if err
               return reply handleError err
             else
-              return reply makeStandardReply { opened: true }
+              return reply makeStandardReply { opened: true, uid: uid, name: name }
 
   server.route
     method: 'POST'

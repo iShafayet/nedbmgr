@@ -14,9 +14,13 @@ dbFilePath = null
 @openDatabaseFile = (filepath, cbfn)->
   db = new NedbDatastore { filename: filepath }
   db.loadDatabase (err)=>
-    unless err
-      dbFilePath = filepath
-    return cbfn err
+    if err
+      return cbfn err
+    dbFilePath = filepath
+    fakeUid = 'gyuo86vt'
+    name = 'Untitled Database'
+    return cbfn null, fakeUid, name
+    
 
 ensureDatabaseIsOpen = (failCbfn, successCbfn)->
   if not db
