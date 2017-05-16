@@ -29,27 +29,46 @@
     <!-- style -->
 
     <style is="custom-style" include="common-style">
-
+    .std-card {
+      margin: 12px;
+    }
+    
+    .blue-button {
+      background: #2196F3;
+      color: white;
+    }
     </style>
 
     <!-- local DOM -->
 
     <div class="master-container">
 
-      <div class="limiting-container">
+      <div class="limiting-container vertical layout">
 
         <template is="dom-if" if="[[$ofHost('user', refreshKey)]]">
           Hi, [[$ofHost('user.name', refreshKey)]].
-          <br><br>
-
-          Which database to open?
+          <br>
+          <br> Which database to open?
           <paper-input value="{{dbPath}}"></paper-input>
           <paper-button raised on-tap="openDbTapped">Open</paper-button>
 
         </template>
 
         <template is="dom-if" if="[[!$ofHost('user', refreshKey)]]">
-          login plz.
+          <paper-card class="std-card">
+
+            <div class="card-content vertical layout center">
+
+              You are not logged in. Please log in.
+
+              <br/><br/>
+
+              <div class="layout horizontal center">
+                <paper-button class="blue-button" raised on-tap="logInTapped">Log In</paper-button>
+              </div>
+
+            </div>
+          </paper-card>
         </template>
 
       </div>

@@ -30,6 +30,10 @@ Polymer {
       type: Object
       value: null
 
+    serverOptions:
+      type: Object
+      value: null
+
     connection:
       type: Object
       value: -> {
@@ -61,6 +65,7 @@ Polymer {
 
   _loadUser: ->
     @user = @getCurrentUser()
+    console.log '_loadUser', @user
 
   # === Create initial connection and fetch options from server ===
 
@@ -96,6 +101,7 @@ Polymer {
         meta.serverHost = app.config.serverHost
         @setMeta meta
         { options } = response.data
+        @serverOptions = options
         @mutexes.readyToNavigate.satisfy 'ConnectionEstablished'
 
   # === Events manually delegated to current page ===

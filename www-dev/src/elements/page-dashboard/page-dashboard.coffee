@@ -20,9 +20,11 @@ Polymer {
       type: String
       value: './test1.db'
 
+  logInTapped: ->
+    @domHost.navigateToPage '#/login'
+
   navigatedIn: ->
     @refreshKey = @refreshKey + 1
-    
 
   openDbTapped: (e)->
     @callOpenDbApi {

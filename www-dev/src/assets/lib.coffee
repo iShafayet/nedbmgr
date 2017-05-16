@@ -371,11 +371,14 @@ lib.DatabaseEngine = DatabaseEngine
 
     xhr = new XMLHttpRequest
 
-    if method is 'GET'
-      data = serializeAndUrlEncode data
-      xhr.open method, "#{url}?#{data}", true
-    else
-      xhr.open method, url, true
+    try
+      if method is 'GET'
+        data = serializeAndUrlEncode data
+        xhr.open method, "#{url}?#{data}", true
+      else
+        xhr.open method, url, true
+    catch err
+      cbfn err
 
     xhr.addEventListener 'load', (response)->
       cbfn null, response
