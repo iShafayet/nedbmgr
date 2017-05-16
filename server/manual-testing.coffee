@@ -9,6 +9,12 @@ opt = {
   db:
     allowCustomDatabaseFilePath: true
     allowCustomDatabaseFilePathExceedingRoot: true
+    predefinedDatabaseFileList: [
+      {
+        name: 'Test Database 1'
+        path: './test/manual/testDatabase1.db'
+      }
+    ]
 }
 
 createStandaloneServer opt, (err)=>

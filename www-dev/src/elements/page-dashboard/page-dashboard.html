@@ -46,11 +46,66 @@
       <div class="limiting-container vertical layout">
 
         <template is="dom-if" if="[[$ofHost('user', refreshKey)]]">
-          Hi, [[$ofHost('user.name', refreshKey)]].
-          <br>
-          <br> Which database to open?
-          <paper-input value="{{dbPath}}"></paper-input>
-          <paper-button raised on-tap="openDbTapped">Open</paper-button>
+
+          <paper-card class="std-card">
+            <div class="card-content vertical layout center">
+              <div>
+                Hi, [[$ofHost('user.name', refreshKey)]]. Welcome to NeDBmgr
+              </div>
+            </div>
+          </paper-card>
+
+          <template is="dom-if" if="[[serverOptions.db.allowCustomDatabaseFilePath]]">
+            <paper-card class="std-card">
+
+              <div class="card-content vertical layout center">
+
+                <div style="word-wrap: break-word;">
+                  Please enter the path to a database that you want to access
+                  <template is="dom-if" if="[[serverOptions.db.allowCustomDatabaseFilePathExceedingRoot]]">
+                    Note that this server allows you to enter a path that is outside your root directory. (In some scenarios, this can be deemed unsafe. To turn it off, please set the <span style="word-wrap: break-word;font-family: courier;">db.allowCustomDatabaseFilePathExceedingRoot</span> config to false.)
+                  </template>
+                  <template is="dom-if" if="[[!serverOptions.db.allowCustomDatabaseFilePathExceedingRoot]]">
+                    Note that this server does not allows you to enter a path that is outside your root directory. To turn it on, please set the <span style="word-wrap: break-word;font-family: courier;">db.allowCustomDatabaseFilePathExceedingRoot</span> config to true.
+                  </template>
+
+                </div>
+
+                <br/>
+
+                <div class="layout horizontal center" style="width: 100%">
+                  <paper-input class="flex" label="Root Dir (Read Only)" value="[[serverOptions.rootDir]]" readonly></paper-input>
+                </div>
+
+                <div class="layout horizontal center" style="width: 100%">
+                  <paper-input class="flex" label="Path to database" value="{{enteredDatabasePath}}"></paper-input>
+                  <paper-button class="blue-button" raised on-tap="openDbTapped">Open File</paper-button>
+                </div>
+
+              </div>
+            </paper-card>
+          </template>
+
+          <paper-card class="std-card">
+
+            <div class="card-content vertical layout ">
+
+              <div>
+                You may select a database from one of the predefined databases.
+              </div>
+
+              <br/>
+
+              <template is="dom-repeat" items="[[serverOptions.db.predefinedDatabaseFileList]]" as="entry">
+                <div class="layout horizontal center" style="width: 100%">
+                  <paper-input class="flex" label="Name" disabled value="[[entry.name]]"></paper-input>
+                  <paper-input class="flex" label="Path" disabled value="[[entry.path]]"></paper-input>
+                  <paper-button class="blue-button" raised on-tap="openDbTapped">Open Database</paper-button>
+                </div>
+              </template>
+
+            </div>
+          </paper-card>
 
         </template>
 
@@ -61,7 +116,8 @@
 
               You are not logged in. Please log in.
 
-              <br/><br/>
+              <br/>
+              <br/>
 
               <div class="layout horizontal center">
                 <paper-button class="blue-button" raised on-tap="logInTapped">Log In</paper-button>

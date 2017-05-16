@@ -11,22 +11,26 @@ Polymer {
   ]
 
   properties:
-    currentFetchRequestTime:
-      type: Number
+    serverOptions:
+      type: Object
+      value: -> null
     refreshKey:
       type: Number
       value: 0
-    dbPath:
+    enteredDatabasePath:
       type: String
-      value: './test1.db'
+      value: './mydatabase.db'
 
   logInTapped: ->
     @domHost.navigateToPage '#/login'
 
   navigatedIn: ->
     @refreshKey = @refreshKey + 1
+    @serverOptions = @domHost.serverOptions
 
   openDbTapped: (e)->
+    alert 'AA'
+    return
     @callOpenDbApi {
       "apiKey": @domHost.user.apiKey,
       "path": @dbPath

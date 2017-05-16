@@ -65,7 +65,6 @@ Polymer {
 
   _loadUser: ->
     @user = @getCurrentUser()
-    console.log '_loadUser', @user
 
   # === Create initial connection and fetch options from server ===
 
@@ -102,6 +101,7 @@ Polymer {
         @setMeta meta
         { options } = response.data
         @serverOptions = options
+        console.log '@serverOptions', @serverOptions
         @mutexes.readyToNavigate.satisfy 'ConnectionEstablished'
 
   # === Events manually delegated to current page ===

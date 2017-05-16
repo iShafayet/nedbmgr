@@ -1,14 +1,58 @@
 
+defaultOptions = {
+  rootDir: null # null to use current working directory
+  apiServer:
+    port: 8501
+    host: 'localhost'
+    pssk: null # is an arbitary string, preshared key that the client must provide with each query. null to ignore.
+  db:
+    readonly: false
+    allowBulkUpdates: true
+    allowBulkDeletes: true
+    allowNonAdminUserTo:
+      useStoredFunctions: true
+      addOrModifyStoredFunctions: false
+    allowCustomDatabaseFilePath: true
+    allowCustomDatabaseFilePathExceedingRoot: false
+    predefinedDatabaseFileList: [
+      {
+        name: 'My Db 1'
+        path: './path-to-my-db'
+      }
+    ]
+  log:
+    filePath: './nedbmgr.log'
+    requests: true
+    queries: true
+    sessions: true
+  user:
+    defaultAdmin:
+      name: "James Bond"
+      email: "james@bond.com"
+      password: "Password1"
+    recoveryContact: 'help@myorg.com'
+  fileServer:
+    enabled: true
+    customDir: null
+    port: 8502
+    host: 'localhost'
+  https:
+    apiServer:
+      enabled: false
+      pkey: null
+      cert: null
+      caBundle: null
+    fileServer:
+      enabled: false
+      pkey: null
+      cert: null
+      caBundle: null
+}
+
 @normalizeOptions = normalizeOptions = (options)->
 
   # default options:
   # ================
-  # apiServer:
-  #   port: 8501
-  #   host: 'localhost'
-  # db:
-  #   allowCustomDatabaseFilePath: true
-  #   allowCustomDatabaseFilePathExceedRoot: true
 
   unless apiServer of options
     options.apiServer = {}
@@ -29,12 +73,33 @@
   unless 'recoveryContact' of user
     user.recoveryContact = 'help@myorg.com'
 
-  unless db of options
+  unless 'db' of options
     options.db = {}
   { db } = options
+  unless 'readonly' of db
+    db.readonly = false
+
+  unless 'allowBulkUpdates' of db
+    db.allowBulkUpdates = true
+  unless 'allowBulkDeletes' of db
+    db.allowBulkDeletes = true
+  unless 'allowNonAdminUserTo' of db
+    db.allowNonAdminUserTo = {}
+  { allowNonAdminUserTo } = db
+  unless 'useStoredFunctions' of allowNonAdminUserTo
+    allowNonAdminUserTo.useStoredFunctions = true
+  unless 'addOrModifyStoredFunctions' of allowNonAdminUserTo
+    allowNonAdminUserTo.addOrModifyStoredFunctions = false
   unless 'allowCustomDatabaseFilePath' of db
     db.allowCustomDatabaseFilePath = true
-  unless 'allowCustomDatabaseFilePathExceedRoot' of db
-    db.allowCustomDatabaseFilePathExceedRoot = true
+  unless 'allowCustomDatabaseFilePathExceedingRoot' of db
+    db.allowCustomDatabaseFilePathExceedingRoot = false
+  unless 'predefinedDatabaseFileList' of db
+    db.predefinedDatabaseFileList = []
+
+
+
+
+
 
   return options
