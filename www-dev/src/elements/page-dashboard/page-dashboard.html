@@ -50,7 +50,10 @@
           <paper-card class="std-card">
             <div class="card-content vertical layout center">
               <div>
-                Hi, [[$ofHost('user.name', refreshKey)]]. Welcome to NeDBmgr
+                Hi, [[$ofHost('user.name', refreshKey)]]. Welcome to NeDBmgr.<br/>
+                <template is="dom-if" if="[[$ofHost('serverDatabase.isOpen', refreshKey)]]">
+                  Currently database at [[$ofHost('serverDatabase.path', refreshKey)]] is open.
+                </template>
               </div>
             </div>
           </paper-card>
@@ -68,7 +71,6 @@
                   <template is="dom-if" if="[[!serverOptions.db.allowCustomDatabaseFilePathExceedingRoot]]">
                     Note that this server does not allows you to enter a path that is outside your root directory. To turn it on, please set the <span style="word-wrap: break-word;font-family: courier;">db.allowCustomDatabaseFilePathExceedingRoot</span> config to true.
                   </template>
-
                 </div>
 
                 <br/>

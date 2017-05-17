@@ -31,12 +31,10 @@ Polymer {
   openPredefinedDbTapped: (e)->
     { path } = e.model.entry
     @domHost.openDatabase path, (err)=>
-      unless err
-        console.log 'open'
+      @refreshKey = @refreshKey + 1
 
   openDbTapped: (e)->
     @domHost.openDatabase @enteredDatabasePath, (err)=>
-      unless err
-        console.log 'open'
+      @refreshKey = @refreshKey + 1
 
 }

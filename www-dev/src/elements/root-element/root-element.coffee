@@ -47,7 +47,7 @@ Polymer {
       type: Object
       value: ->
         {
-          isOpen: null
+          isOpen: false
           path: null
           name: null
           uid: null
@@ -80,10 +80,10 @@ Polymer {
   # === database selection, opening and closing ===
 
   openDatabase: (path, cbfn)->
-    @set 'database.uid', null
-    @set 'database.path', null
-    @set 'database.name', null
-    @set 'database.isOpen', false
+    @set 'serverDatabase.uid', null
+    @set 'serverDatabase.path', null
+    @set 'serverDatabase.name', null
+    @set 'serverDatabase.isOpen', false
     @callOpenDbApi {
       "apiKey": @user.apiKey,
       "path": path
@@ -93,10 +93,11 @@ Polymer {
       else
         if response.data.opened
           @showModalDialog "Database Opened"
-          @set 'database.uid', response.data.uid
-          @set 'database.path', path
-          @set 'database.name', response.data.name
-          @set 'database.isOpen', true
+          @set 'serverDatabase.uid', response.data.uid
+          @set 'serverDatabase.path', path
+          @set 'serverDatabase.name', response.data.name
+          @set 'serverDatabase.isOpen', true
+          cbfn()
 
 
   # === Create initial connection and fetch options from server ===
