@@ -82,7 +82,6 @@ Polymer {
 
   _openLastUsedDatabaseIfExists: (cbfn)->
     db = @getLastOpenedDatabase()
-    console.log db
     if db
       @openDatabase db.path, cbfn
     else

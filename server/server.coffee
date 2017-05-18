@@ -114,23 +114,6 @@ Joi = require('joi')
 
   server.route
     method: 'POST'
-    path: '/api/1/get-opened-db-list'
-    config: 
-      validate: 
-        payload:
-          apiKey: Joi.string().required()
-          '__meta': Joi.object()
-    handler: (request, reply) ->
-      { apiKey, path } = request.payload
-      getUserIdFromApiKey apiKey, (err, userId)=>
-        if err
-          return reply handleError err
-        else
-          openedDatabaseList = getOpenedDatabaseList()
-          return reply makeStandardReply { openedDatabaseList }
-          
-  server.route
-    method: 'POST'
     path: '/api/1/query'
     config: 
       validate: 

@@ -75,11 +75,6 @@ app.behaviors.apiCalling =
     @callApi 'get-opened-db-list', data, true, false, (err, response)=>
       cbfn err, response
 
-  callGetOpenedDatabaseListApi: (data, cbfn)->
-    @appendDatabaseUid data
-    @callApi 'get-opened-db-list', data, true, false, (err, response)=>
-      cbfn err, response
-
   callFetchStoredQueryListApi: (data, cbfn)->
     @callApi 'fetch-stored-query-list', data, true, false, (err, response)=>
       cbfn err, response
@@ -93,5 +88,6 @@ app.behaviors.apiCalling =
       cbfn err, response
 
   callRunCodeApi: (data, cbfn)->
+    @appendDatabaseUid data
     @callApi 'run-code', data, true, false, (err, response)=>
       cbfn err, response
