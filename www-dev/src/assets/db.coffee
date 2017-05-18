@@ -29,3 +29,6 @@ app.db.defineCollection {
   name: '--meta'
 }
 
+app.db.defineCollection {
+  name: '--server-db'
+}

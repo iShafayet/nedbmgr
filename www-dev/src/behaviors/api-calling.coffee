@@ -7,7 +7,15 @@ app.behaviors.apiCalling =
     else if @domHost and (name of @domHost)
       @domHost[name].bind @domHost
     else
-      throw "Property to be bound was not found"
+      throw new Error "Property to be bound was not found"
+
+  @appendDatabaseUid: (data)->
+    if 'serverDatabase' of @
+      data.uid = @serverDatabase.uid
+    else if 'serverDatabase' of @domHost
+      data.uid = @domHost.serverDatabase.uid
+    else
+      throw new Error "serverDatabase does not exist"
 
   callApi: (apiPath, data, autoHandleErrors, autoHandleNon200, cbfn)->
     fn = @bindToSelfOrHost 'notifyApiAction'
@@ -38,30 +46,37 @@ app.behaviors.apiCalling =
       cbfn err, response
 
   callQueryApi: (data, cbfn)->
+    @appendDatabaseUid data
     @callApi 'query', data, true, false, (err, response)=>
       cbfn err, response
 
   callUpdateDocApi: (data, cbfn)->
+    @appendDatabaseUid data
     @callApi 'update-doc', data, true, false, (err, response)=>
       cbfn err, response
 
   callRemoveDocApi: (data, cbfn)->
+    @appendDatabaseUid data
     @callApi 'remove-doc', data, true, false, (err, response)=>
       cbfn err, response
 
   callBulkUpdateApi: (data, cbfn)->
+    @appendDatabaseUid data
     @callApi 'bulk-update', data, true, false, (err, response)=>
       cbfn err, response
 
   callBulkDeleteApi: (data, cbfn)->
+    @appendDatabaseUid data
     @callApi 'bulk-delete', data, true, false, (err, response)=>
       cbfn err, response
 
   callGetOpenedDatabaseListApi: (data, cbfn)->
+    @appendDatabaseUid data
     @callApi 'get-opened-db-list', data, true, false, (err, response)=>
       cbfn err, response
 
   callGetOpenedDatabaseListApi: (data, cbfn)->
+    @appendDatabaseUid data
     @callApi 'get-opened-db-list', data, true, false, (err, response)=>
       cbfn err, response
 

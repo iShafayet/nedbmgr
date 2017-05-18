@@ -72,12 +72,21 @@ Polymer {
 
   readyToNavigate: ->
     @mutexes.readyToNavigate.deprive 'RoutingDone'
-    @viewName = @page.name
+    @_openLastUsedDatabaseIfExists =>
+      @viewName = @page.name
 
   _loadUser: ->
     @user = @getCurrentUser()
 
   # === database selection, opening and closing ===
+
+  _openLastUsedDatabaseIfExists: (cbfn)->
+    db = @getLastOpenedDatabase()
+    console.log db
+    if db
+      @openDatabase db.path, cbfn
+    else
+      lib.util.setImmediate cbfn
 
   openDatabase: (path, cbfn)->
     @set 'serverDatabase.uid', null
@@ -97,8 +106,9 @@ Polymer {
           @set 'serverDatabase.path', path
           @set 'serverDatabase.name', response.data.name
           @set 'serverDatabase.isOpen', true
+          serverDatabase = lib.util.deepCopy @serverDatabase
+          @saveDatabaseDetailsForLaterUse serverDatabase
           cbfn()
-
 
   # === Create initial connection and fetch options from server ===
 

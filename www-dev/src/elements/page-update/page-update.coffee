@@ -206,12 +206,9 @@ Polymer {
     return text
 
   _checkOpenedDatabasesAndSelectDefault: ->
-    if @domHost.openedDatabaseList.length is 0
+    if not @domHost.serverDatabase.isOpen
       @domHost.showModalDialog "Please open a database before querying.", =>
         @domHost.navigateToPage '#/'
-    else 
-      if @domHost.openedDatabaseList.length > 1
-        @domHost.showModalDialog "Please note that opening multiple database are not yet supported. The last opened database will be automatically selected."
 
   navigatedIn: ->
     @_checkOpenedDatabasesAndSelectDefault()

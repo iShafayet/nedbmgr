@@ -45,3 +45,9 @@ app.behaviors.dbUsing =
   setMeta: (meta)-> 
     app.db.upsert '--meta', meta, (({ serial }) -> serial is 'only')
 
+  getLastOpenedDatabase: ->
+    return ((app.db.find '--server-db', ({ serial }) -> serial is 'only')[0]) or null
+
+  saveDatabaseDetailsForLaterUse: (db)->
+    db.serial = 'only'
+    app.db.upsert '--server-db', db, (({ serial }) -> serial is 'only')
