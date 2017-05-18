@@ -119,17 +119,18 @@ Joi = require('joi')
       validate: 
         payload:
           apiKey: Joi.string().required()
+          uid: Joi.string().required()
           query: Joi.object().required()
           skip: Joi.number().required()
           limit: Joi.number().required()
           '__meta': Joi.object()
     handler: (request, reply) ->
-      { apiKey, query, skip, limit } = request.payload
+      { apiKey, uid, query, skip, limit } = request.payload
       getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
-          runQuery query, skip, limit, (err, count, docList)=>
+          runQuery uid, query, skip, limit, (err, count, docList)=>
             if err
               return reply handleError err
             else
@@ -142,22 +143,23 @@ Joi = require('joi')
       validate: 
         payload:
           apiKey: Joi.string().required()
+          uid: Joi.string().required()
           query: Joi.object().required()
           updateCommand: Joi.object().required()
           shouldReturnUpdatedDocList: Joi.boolean().required()
           '__meta': Joi.object()
     handler: (request, reply) ->
-      { apiKey, query, updateCommand, shouldReturnUpdatedDocList } = request.payload
+      { apiKey, uid, query, updateCommand, shouldReturnUpdatedDocList } = request.payload
       getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
-          bulkUpdate query, updateCommand, (err, count)=>
+          bulkUpdate uid, query, updateCommand, (err, count)=>
             if err
               return reply handleError err
             else
               if shouldReturnUpdatedDocList
-                runQuery query, 0, 9999, (err, _, docList)=>
+                runQuery uid, query, 0, 9999, (err, _, docList)=>
                   return reply makeStandardReply { count, docList }
               else
                 return reply makeStandardReply { count }
@@ -169,15 +171,16 @@ Joi = require('joi')
       validate: 
         payload:
           apiKey: Joi.string().required()
+          uid: Joi.string().required()
           query: Joi.object().required()
           '__meta': Joi.object()
     handler: (request, reply) ->
-      { apiKey, query, } = request.payload
+      { apiKey, uid, query, } = request.payload
       getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
-          bulkDelete query, (err, count)=>
+          bulkDelete uid, query, (err, count)=>
             if err
               return reply handleError err
             else
@@ -190,15 +193,16 @@ Joi = require('joi')
       validate: 
         payload:
           apiKey: Joi.string().required()
+          uid: Joi.string().required()
           doc: Joi.object().required()
           '__meta': Joi.object()
     handler: (request, reply) ->
-      { apiKey, doc } = request.payload
+      { apiKey, uid, doc } = request.payload
       getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
-          updateSingleDoc doc, (err, wasUpdated)=>
+          updateSingleDoc uid, doc, (err, wasUpdated)=>
             if err
               return reply handleError err
             else
@@ -211,19 +215,42 @@ Joi = require('joi')
       validate: 
         payload:
           apiKey: Joi.string().required()
+          uid: Joi.string().required()
           id: Joi.string().required()
           '__meta': Joi.object()
     handler: (request, reply) ->
-      { apiKey, id } = request.payload
+      { apiKey, uid, id } = request.payload
       getUserIdFromApiKey apiKey, (err, userId)=>
         if err
           return reply handleError err
         else
-          removeSingleDoc id, (err, wasDeleted)=>
+          removeSingleDoc uid, id, (err, wasDeleted)=>
             if err
               return reply handleError err
             else
               return reply makeStandardReply { deleted: wasDeleted }
+
+  server.route
+    method: 'POST'
+    path: '/api/1/run-code'
+    config: 
+      validate: 
+        payload:
+          apiKey: Joi.string().required()
+          uid: Joi.string().required()
+          code: Joi.string().required()
+          '__meta': Joi.object()
+    handler: (request, reply) ->
+      { apiKey, uid, code } = request.payload
+      getUserIdFromApiKey apiKey, (err, userId)=>
+        if err
+          return reply handleError err
+        else
+          runCode uid, code, (err, errOutput, logOutput, docList)=>
+            if err
+              return reply handleError err
+            else
+              return reply makeStandardReply { errOutput, logOutput, docList }
 
   server.route
     method: 'POST'
@@ -286,28 +313,6 @@ Joi = require('joi')
               return reply handleError err
             else
               return reply makeStandardReply { wasDeleted: wasDeleted }
-
-  server.route
-    method: 'POST'
-    path: '/api/1/run-code'
-    config: 
-      validate: 
-        payload:
-          apiKey: Joi.string().required()
-          code: Joi.string().required()
-          '__meta': Joi.object()
-    handler: (request, reply) ->
-      { apiKey, code } = request.payload
-      getUserIdFromApiKey apiKey, (err, userId)=>
-        if err
-          return reply handleError err
-        else
-          runCode code, (err, errOutput, logOutput, docList)=>
-            if err
-              return reply handleError err
-            else
-              return reply makeStandardReply { errOutput, logOutput, docList }
-
 
   server.register {
     register: Good

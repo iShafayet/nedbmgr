@@ -5,8 +5,8 @@
 
 { VM, NodeVM } = require 'vm2'
 
-@runCode = runCode = (code, cbfn)->
-  getRawDatabaseHandle (err, db)=>
+@runCode = runCode = (uid, code, cbfn)->
+  getRawDatabaseHandle uid, (err, db)=>
     if err
       cbfn err
       return

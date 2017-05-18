@@ -34,7 +34,7 @@ ensureDatabaseIsOpen = (failCbfn, successCbfn)->
   else
     return []
 
-@bulkUpdate = bulkUpdate = (query, updateCommand, cbfn)->
+@bulkUpdate = bulkUpdate = (uid, query, updateCommand, cbfn)->
   ensureDatabaseIsOpen cbfn, =>
     options = {
       multi: true
@@ -44,7 +44,7 @@ ensureDatabaseIsOpen = (failCbfn, successCbfn)->
         return cbfn err
       return cbfn err, count
 
-@bulkDelete = bulkDelete = (query, cbfn)->
+@bulkDelete = bulkDelete = (uid, query, cbfn)->
   ensureDatabaseIsOpen cbfn, =>
     options = {
       multi: true
@@ -54,7 +54,7 @@ ensureDatabaseIsOpen = (failCbfn, successCbfn)->
         return cbfn err
       return cbfn err, count
 
-@runQuery = runQuery = (query, skip, limit, cbfn)->
+@runQuery = runQuery = (uid, query, skip, limit, cbfn)->
   parseSpecialJson (JSON.stringify query), (err, query)=>
     if err
       return cbfn err
@@ -65,7 +65,7 @@ ensureDatabaseIsOpen = (failCbfn, successCbfn)->
         (((db.find query).skip skip).limit limit).exec (err, docList)=>
           return cbfn err, count, docList
 
-@updateSingleDoc = updateSingleDoc = (doc, cbfn)->
+@updateSingleDoc = updateSingleDoc = (uid, doc, cbfn)->
   ensureDatabaseIsOpen cbfn, =>
     id = doc._id
     delete doc['_id']
@@ -75,13 +75,13 @@ ensureDatabaseIsOpen = (failCbfn, successCbfn)->
       doc._id = id
       cbfn err, (numAltered is 1)
 
-@removeSingleDoc = removeSingleDoc = (id, cbfn)->
+@removeSingleDoc = removeSingleDoc = (uid, id, cbfn)->
   ensureDatabaseIsOpen cbfn, =>
     db.remove { _id: id }, { multi: false }, (err, numRemoved)=>
       if err
         return cbfn err
       cbfn null, (numRemoved is 1)
 
-@getRawDatabaseHandle = (cbfn)->
+@getRawDatabaseHandle = (uid, cbfn)->
   ensureDatabaseIsOpen cbfn, =>
     cbfn null, db
