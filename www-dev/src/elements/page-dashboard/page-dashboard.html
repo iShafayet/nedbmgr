@@ -33,6 +33,11 @@
       margin: 12px;
     }
     
+    .red-button {
+      background: #FF5722;
+      color: white;
+    }
+
     .blue-button {
       background: #2196F3;
       color: white;
@@ -50,64 +55,83 @@
           <paper-card class="std-card">
             <div class="card-content vertical layout center">
               <div>
-                Hi, [[$ofHost('user.name', refreshKey)]]. Welcome to NeDBmgr.<br/>
-                <template is="dom-if" if="[[$ofHost('serverDatabase.isOpen', refreshKey)]]">
-                  Currently database at [[$ofHost('serverDatabase.path', refreshKey)]] is open.
-                </template>
+                Hi, [[$ofHost('user.name', refreshKey)]]. Welcome to NeDBmgr.
+                <br/>
               </div>
             </div>
           </paper-card>
 
-          <template is="dom-if" if="[[serverOptions.db.allowCustomDatabaseFilePath]]">
+          <template is="dom-if" if="[[$ofHost('serverDatabase.isOpen', refreshKey)]]">
+
+            <paper-card class="std-card">
+              <div class="card-content vertical layout center">
+                <div>
+                  Currently database at <strong>[[$ofHost('serverDatabase.path', refreshKey)]]</strong> is open. Select an option from the top left menu bar to start querying and more.
+                 </div>
+                 <br />
+                 <paper-button class="blue-button" raised on-tap="accessDbTapped">Access Database</paper-button>
+                 <br />
+                  <paper-button class="red-button" raised on-tap="closeDbTapped">Close Opened Database</paper-button>
+                
+              </div>
+            </paper-card>
+
+          </template>
+
+          <template is="dom-if" if="[[!$ofHost('serverDatabase.isOpen', refreshKey)]]">
+
+            <template is="dom-if" if="[[serverOptions.db.allowCustomDatabaseFilePath]]">
+              <paper-card class="std-card">
+
+                <div class="card-content vertical layout center">
+
+                  <div style="word-wrap: break-word;">
+                    Please enter the path to a database that you want to access
+                    <template is="dom-if" if="[[serverOptions.db.allowCustomDatabaseFilePathExceedingRoot]]">
+                      Note that this server allows you to enter a path that is outside your root directory. (In some scenarios, this can be deemed unsafe. To turn it off, please set the <span style="word-wrap: break-word;font-family: courier;">db.allowCustomDatabaseFilePathExceedingRoot</span> config to false.)
+                    </template>
+                    <template is="dom-if" if="[[!serverOptions.db.allowCustomDatabaseFilePathExceedingRoot]]">
+                      Note that this server does not allows you to enter a path that is outside your root directory. To turn it on, please set the <span style="word-wrap: break-word;font-family: courier;">db.allowCustomDatabaseFilePathExceedingRoot</span> config to true.
+                    </template>
+                  </div>
+
+                  <br/>
+
+                  <div class="layout horizontal center" style="width: 100%">
+                    <paper-input class="flex" label="Root Dir (Read Only)" value="[[serverOptions.rootDir]]" readonly></paper-input>
+                  </div>
+
+                  <div class="layout horizontal center" style="width: 100%">
+                    <paper-input class="flex" label="Path to database" value="{{enteredDatabasePath}}"></paper-input>
+                    <paper-button class="blue-button" raised on-tap="openDbTapped">Open File</paper-button>
+                  </div>
+
+                </div>
+              </paper-card>
+            </template>
+
             <paper-card class="std-card">
 
-              <div class="card-content vertical layout center">
+              <div class="card-content vertical layout ">
 
-                <div style="word-wrap: break-word;">
-                  Please enter the path to a database that you want to access
-                  <template is="dom-if" if="[[serverOptions.db.allowCustomDatabaseFilePathExceedingRoot]]">
-                    Note that this server allows you to enter a path that is outside your root directory. (In some scenarios, this can be deemed unsafe. To turn it off, please set the <span style="word-wrap: break-word;font-family: courier;">db.allowCustomDatabaseFilePathExceedingRoot</span> config to false.)
-                  </template>
-                  <template is="dom-if" if="[[!serverOptions.db.allowCustomDatabaseFilePathExceedingRoot]]">
-                    Note that this server does not allows you to enter a path that is outside your root directory. To turn it on, please set the <span style="word-wrap: break-word;font-family: courier;">db.allowCustomDatabaseFilePathExceedingRoot</span> config to true.
-                  </template>
+                <div>
+                  You may select a database from one of the predefined databases.
                 </div>
 
                 <br/>
 
-                <div class="layout horizontal center" style="width: 100%">
-                  <paper-input class="flex" label="Root Dir (Read Only)" value="[[serverOptions.rootDir]]" readonly></paper-input>
-                </div>
-
-                <div class="layout horizontal center" style="width: 100%">
-                  <paper-input class="flex" label="Path to database" value="{{enteredDatabasePath}}"></paper-input>
-                  <paper-button class="blue-button" raised on-tap="openDbTapped">Open File</paper-button>
-                </div>
+                <template is="dom-repeat" items="[[serverOptions.db.predefinedDatabaseFileList]]" as="entry">
+                  <div class="layout horizontal center" style="width: 100%">
+                    <paper-input class="flex" label="Name" disabled value="[[entry.name]]"></paper-input>
+                    <paper-input class="flex" label="Path" disabled value="[[entry.path]]"></paper-input>
+                    <paper-button class="blue-button" raised on-tap="openPredefinedDbTapped">Open Database</paper-button>
+                  </div>
+                </template>
 
               </div>
             </paper-card>
+
           </template>
-
-          <paper-card class="std-card">
-
-            <div class="card-content vertical layout ">
-
-              <div>
-                You may select a database from one of the predefined databases.
-              </div>
-
-              <br/>
-
-              <template is="dom-repeat" items="[[serverOptions.db.predefinedDatabaseFileList]]" as="entry">
-                <div class="layout horizontal center" style="width: 100%">
-                  <paper-input class="flex" label="Name" disabled value="[[entry.name]]"></paper-input>
-                  <paper-input class="flex" label="Path" disabled value="[[entry.path]]"></paper-input>
-                  <paper-button class="blue-button" raised on-tap="openPredefinedDbTapped">Open Database</paper-button>
-                </div>
-              </template>
-
-            </div>
-          </paper-card>
 
         </template>
 

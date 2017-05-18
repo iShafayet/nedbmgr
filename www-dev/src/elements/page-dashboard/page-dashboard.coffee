@@ -21,6 +21,9 @@ Polymer {
       type: String
       value: './test/manual/mydatabase.db'
 
+  accessDbTapped: (e)->
+    @domHost.$$('app-drawer').toggle()
+
   logInTapped: ->
     @domHost.navigateToPage '#/login'
 

@@ -92,7 +92,7 @@ Polymer {
         @showModalDialog response.message
       else
         if response.data.opened
-          @showModalDialog "Database Opened"
+          @showToast "Database Opened"
           @set 'serverDatabase.uid', response.data.uid
           @set 'serverDatabase.path', path
           @set 'serverDatabase.name', response.data.name
