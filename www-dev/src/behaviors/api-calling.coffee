@@ -9,7 +9,7 @@ app.behaviors.apiCalling =
     else
       throw new Error "Property to be bound was not found"
 
-  @appendDatabaseUid: (data)->
+  appendDatabaseUid: (data)->
     if 'serverDatabase' of @
       data.uid = @serverDatabase.uid
     else if 'serverDatabase' of @domHost
