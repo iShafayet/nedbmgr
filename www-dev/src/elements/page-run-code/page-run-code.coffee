@@ -12,13 +12,26 @@ Polymer {
   ]
 
   properties:
-    queryString:
+    coffeeScriptCodeString:
+      type: String
+      value: ->
+        """
+        queryObject =
+          collection: 'user'
+        query queryObject, (err, docList) ->
+          if err
+            error err
+          else
+            collect docList
+          done()
+        """
+      observer: 'queryStringAltered'
+    javascriptCodeString:
       type: String
       value: ->
         """
         queryObject = {
-          collection:"user-info",
-          "emailAddressList.emailAddress": ""
+          collection:"user"
         };
         query(queryObject, function(err, docList){
           if(err) {
@@ -52,17 +65,19 @@ Polymer {
     selectedDocIndex:
       type: Number
       value: 0
-      
+    codeLanguageSelectedIndex:
+      type: Number
+      value: 0
+
   arrowBackButtonPressed: (e)->
     @domHost.navigateToPreviousPage()
 
   _validateQueryString: ->
     @queryInputErrorMessage = ''
-    return @queryString
+    return @javascriptCodeString
 
   queryStringAltered: ->
-    if @queryString.length isnt 0
-      @_validateQueryString()
+    @_validateQueryString()
 
   ## NOTE: Do not remove. 
   # prettifyButtonTapped: (e)->
@@ -96,7 +111,15 @@ Polymer {
     @resultMessage = msg
 
   runCodeButtonTapped: (e)->
-    code = @_validateQueryString()
+    if @codeLanguageSelectedIndex is 0
+      try
+        code = CoffeeScript.compile @coffeeScriptCodeString
+      catch ex
+        code = null
+        @queryInputErrorMessage = ex
+    else
+      code = @_validateQueryString()
+
     unless code
       @domHost.showModalDialog "Your code has errors."
       return

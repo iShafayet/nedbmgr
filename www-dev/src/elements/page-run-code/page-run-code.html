@@ -18,7 +18,8 @@
 <link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
-
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
 <!-- style -->
 <link rel="import" href="../../styles/common-style.html">
 
@@ -110,7 +111,6 @@
       }
     }
     
-    
     .query-input-error {
       color: red;
       margin-top: 10px;
@@ -159,6 +159,18 @@
     .syntax-args {
       color: blue;
     }
+    
+    paper-tabs paper-tab.iron-selected {
+      color: #ffff8d;
+    }
+    
+    paper-tabs {
+      margin-bottom: 20px;
+      --paper-tabs: {
+        color: white;
+        background: #2196F3;
+      };
+    }
     </style>
 
     <!-- local DOM -->
@@ -169,41 +181,85 @@
 
         <!-- query - start -->
         <div class="external-card-title">
-          <div>Query</div>
+          <div>Code</div>
         </div>
 
         <paper-card class="info-card">
           <div class="card-content">
 
-            <div class="vertical layout fn-area">
-              <div>
-                <span class="syntax-fn">function</span>
-                <span class="syntax-braces">(</span>
-                <span class="syntax-args">done</span>
-                <span class="syntax-comma">,</span>
-                <span class="syntax-args">collect</span>
-                <span class="syntax-comma">,</span>
-                <span class="syntax-args">log</span>
-                <span class="syntax-comma">,</span>
-                <span class="syntax-args">err</span>
-                <span class="syntax-comma">,</span>
-                <span class="syntax-args">query</span>
-                <span class="syntax-comma">,</span>
-                <span class="syntax-args">update</span>
-                <span class="syntax-comma">,</span>
-                <span class="syntax-args">insert</span>
-                <span class="syntax-comma">,</span>
-                <span class="syntax-args">remove</span>
-                <span class="syntax-braces">)</span>
-                <span class="syntax-braces">{</span>
+            <paper-tabs selected="{{codeLanguageSelectedIndex}}">
+              <paper-tab>CoffeeScript</paper-tab>
+              <paper-tab>Javascript</paper-tab>
+            </paper-tabs>
+
+            <template is="dom-if" if="[[$equals(codeLanguageSelectedIndex, 0)]]">
+
+              <div class="vertical layout fn-area">
+                <div>
+                  <span class="syntax-fn"></span>
+                  <span class="syntax-braces">(</span>
+                  <span class="syntax-args">done</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">collect</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">log</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">err</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">query</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">update</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">insert</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">remove</span>
+                  <span class="syntax-braces">)</span>
+                  <span class="syntax-braces"></span>
+                  <span class="syntax-braces">=></span>
+                </div>
+
+                <paper-textarea class="query-input" value="{{coffeeScriptCodeString}}" rows="6"></paper-textarea>
+
+                <!-- <div>
+                  <span class="syntax-braces">#end</span>
+                </div> -->
               </div>
 
-              <paper-textarea class="query-input" value="{{queryString}}" rows="6"></paper-textarea>
+            </template>
 
-              <div>
-                <span class="syntax-braces">}</span>
+            <template is="dom-if" if="[[$equals(codeLanguageSelectedIndex, 1)]]">
+
+              <div class="vertical layout fn-area">
+                <div>
+                  <span class="syntax-fn">function</span>
+                  <span class="syntax-braces">(</span>
+                  <span class="syntax-args">done</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">collect</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">log</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">err</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">query</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">update</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">insert</span>
+                  <span class="syntax-comma">,</span>
+                  <span class="syntax-args">remove</span>
+                  <span class="syntax-braces">)</span>
+                  <span class="syntax-braces">{</span>
+                </div>
+
+                <paper-textarea class="query-input" value="{{javascriptCodeString}}" rows="6"></paper-textarea>
+
+                <div>
+                  <span class="syntax-braces">}</span>
+                </div>
               </div>
-            </div>
+
+            </template>
 
             <template is="dom-if" if="[[queryInputErrorMessage]]">
               <div class="query-input-error">[[queryInputErrorMessage]]</div>

@@ -16,7 +16,7 @@ Polymer {
       type: String
       value: ->
         object = 
-          collection: 'user-info'
+          collection: 'user'
         JSON.stringify object, null, 2
       # observer: 'queryStringAltered'
     queryInputErrorMessage:
@@ -248,7 +248,7 @@ Polymer {
         string = JSON.stringify object, null, 2
         @queryString = string
     else
-      @domHost.showToast "Unable to prettify CSON"
+      @domHost.showToast "Unable to prettify CSON currently"
 
   _runQuery: (object, cbfn)->
     token = (new Date).getTime()
