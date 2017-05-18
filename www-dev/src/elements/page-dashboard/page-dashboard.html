@@ -37,7 +37,7 @@
       background: #FF5722;
       color: white;
     }
-
+    
     .blue-button {
       background: #2196F3;
       color: white;
@@ -66,13 +66,18 @@
             <paper-card class="std-card">
               <div class="card-content vertical layout center">
                 <div>
-                  Currently database at <strong>[[$ofHost('serverDatabase.path', refreshKey)]]</strong> is open. Select an option from the top left menu bar to start querying and more.
-                 </div>
-                 <br />
-                 <paper-button class="blue-button" raised on-tap="accessDbTapped">Access Database</paper-button>
-                 <br />
-                  <paper-button class="red-button" raised on-tap="closeDbTapped">Close Opened Database</paper-button>
-                
+                  Currently you have 1 database open.
+                  <br/>
+                  <br/> Name: <strong>[[$ofHost('serverDatabase.name', refreshKey)]]</strong>
+                  <br/> Path: <strong>[[$ofHost('serverDatabase.path', refreshKey)]]</strong>
+                  <br/>
+                  <br/> Select an option from the top left menu bar to start querying and more.
+                </div>
+                <br />
+                <paper-button class="blue-button" raised on-tap="accessDbTapped">Access Database</paper-button>
+                <br />
+                <paper-button class="red-button" raised on-tap="closeDbTapped">Close Opened Database</paper-button>
+
               </div>
             </paper-card>
 

@@ -82,7 +82,7 @@ Polymer {
 
   _openLastUsedDatabaseIfExists: (cbfn)->
     db = @getLastOpenedDatabase()
-    if db
+    if db and (not @serverDatabase.isOpen)
       @openDatabase db.path, cbfn
     else
       lib.util.setImmediate cbfn
