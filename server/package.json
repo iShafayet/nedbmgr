@@ -1,6 +1,6 @@
 {
   "name": "nedbmgr",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Data Management/Administration UI for NeDB, The JavaScript Database, for Node.js, nw.js, electron and the browser",
   "main": "index-runner.js",
   "scripts": {
